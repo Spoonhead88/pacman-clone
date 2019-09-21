@@ -39,61 +39,62 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function movementInterval(direction) {
-    
+  function move(direction, timing = 500) {
+    clearInterval(movementId)
+    //if direction is corrected then change in a split second before carrying on
+    setTimeout(function() { movementInterval(direction) }, 10)
+    movementId = setInterval(function() { movementInterval(direction) }, timing)
   }
 
-  function move(direction, timing = 500) {
-    console.log('inside move()')
-    clearInterval(movementId)
-    movementId = setInterval(() => {
-      //store this so that we can stay if needed and for removing the class after decision
-      const currentIdx = playerIdx
+  function movementInterval(direction) {
+    console.log('inside movement interval. ')
+    //store this so that we can stay if needed and for removing the class after decision
+    const currentIdx = playerIdx
 
-      //handle user input
-      switch (direction) {
-        //move left, only if but not past zero
-        case 'left': playerIdx -= 1
-          break
-        //go up a whole row, but not past zero
-        case 'up': playerIdx -= width
-          break
-        //move right, -1 because cpu starts at 0
-        case 'right': playerIdx += 1
-          break
-        //move down by adding a whole row
-        case 'down': playerIdx += width
-          break
-      }
+    //handle user input
+    switch (direction) {
+      //move left, only if but not past zero
+      case 'left': playerIdx -= 1
+        break
+      //go up a whole row, but not past zero
+      case 'up': playerIdx -= width
+        break
+      //move right, -1 because cpu starts at 0
+      case 'right': playerIdx += 1
+        break
+      //move down by adding a whole row
+      case 'down': playerIdx += width
+        break
+    }
 
-      console.log(playerIdx)
+    console.log(playerIdx)
 
-      //check to see if this next index is wall, if so, dont move
-      if (cells[playerIdx].classList.contains('wall')) {
-        //stay where it is
-        playerIdx = currentIdx
-        //if player tries to change direction into a wall keep moving in current direction
-        if (bPlayerRequest) {
-          //do not clear interval, carry on in same direction
-          bPlayerRequest = false
-          //clearInterval(movementId)
-          console.log('should move previous direction')
-          console.log(previousDirection)
-          move(previousDirection)
-          return
-        }
-        //stop moving
+    //check to see if this next index is wall, if so, dont move
+    if (cells[playerIdx].classList.contains('wall')) {
+      //stay where it is
+      playerIdx = currentIdx
+      //if player tries to change direction into a wall keep moving in current direction
+      if (bPlayerRequest) {
+        //do not clear interval, carry on in same direction
+        bPlayerRequest = false
+        //clearInterval(movementId)
+        console.log('should move previous direction')
+        console.log(previousDirection)
         clearInterval(movementId)
+        move(previousDirection)
+        return
       }
-      // always set back to false after initial input
-      bPlayerRequest = false
-      //when moving, first thing to do is remove player from current div before moving on
-      cells[currentIdx].classList.remove('player')
-      //now that the index has moved, add player class to it
-      cells[playerIdx].classList.add('player')
-      //store this globally
-      previousDirection = direction
-    }, timing)
+      //stop moving
+      clearInterval(movementId)
+    }
+    // always set back to false after initial input
+    bPlayerRequest = false
+    //when moving, first thing to do is remove player from current div before moving on
+    cells[currentIdx].classList.remove('player')
+    //now that the index has moved, add player class to it
+    cells[playerIdx].classList.add('player')
+    //store this globally
+    previousDirection = direction
   }
 
   function setupPlayerInput() {
