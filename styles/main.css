@@ -52,7 +52,31 @@ body {
   background: orange;
 }
 
-.grid div.firstGhost {
+.grid div.blinky {
+  background-image: url(../assets/pacmanspritesheet.png);
+  background-size: 600px;
+  /* properties to be edited to animate the sprite */
+  background-position-x: -12px;
+  background-position-y: -160px;
+}
+
+.grid div.pinky {
+  background-image: url(../assets/pacmanspritesheet.png);
+  background-size: 600px;
+  /* properties to be edited to animate the sprite */
+  background-position-x: -12px;
+  background-position-y: -160px;
+}
+
+.grid div.inky {
+  background-image: url(../assets/pacmanspritesheet.png);
+  background-size: 600px;
+  /* properties to be edited to animate the sprite */
+  background-position-x: -12px;
+  background-position-y: -160px;
+}
+
+.grid div.clyde {
   background-image: url(../assets/pacmanspritesheet.png);
   background-size: 600px;
   /* properties to be edited to animate the sprite */

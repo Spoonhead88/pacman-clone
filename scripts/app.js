@@ -70,52 +70,62 @@ document.addEventListener('DOMContentLoaded', () => {
       //place cssClass on new cell
       cells[this.ghostIdx].classList.add(this.cssClass)
     }
-    move() {
-      this.timerId = setInterval(() => {
-        //get player and ghost coords
-        const playerX = cells[playerIdx].getBoundingClientRect().left
-        const ghostX = cells[this.ghostIdx].getBoundingClientRect().left
-        const playerY = cells[playerIdx].getBoundingClientRect().top
-        const ghostY = cells[this.ghostIdx].getBoundingClientRect().top
-        // check up, if there is no wall and not previous position, move there
-        //if the next cells index matches previous, dont move there
-        if (cells[this.ghostIdx - width].classList.contains('wall') === false
-          && cells.indexOf(cells[this.ghostIdx - width]) !== this.previousIdx
-          && ghostY > playerY) {
-          this.moveUp()
-        } else if (cells[this.ghostIdx + width].classList.contains('wall') === false 
+    moveCloser() {
+      //get player and ghost coords
+      const playerX = cells[playerIdx].getBoundingClientRect().left
+      const ghostX = cells[this.ghostIdx].getBoundingClientRect().left
+      const playerY = cells[playerIdx].getBoundingClientRect().top
+      const ghostY = cells[this.ghostIdx].getBoundingClientRect().top
+      // check up, if there is no wall and not previous position, move there
+      //if the next cells index matches previous, dont move there
+      if (cells[this.ghostIdx - width].classList.contains('wall') === false
+        && cells.indexOf(cells[this.ghostIdx - width]) !== this.previousIdx
+        && ghostY > playerY) {
+        this.moveUp()
+      } else if (cells[this.ghostIdx + width].classList.contains('wall') === false
         && cells.indexOf(cells[this.ghostIdx + width]) !== this.previousIdx
         && ghostY < playerY) {
-          //check down, if poss move there
-          this.moveDown()
-        } else if (cells[this.ghostIdx - 1].classList.contains('wall') === false
-          && cells.indexOf(cells[this.ghostIdx - 1]) !== this.previousIdx
-          && ghostX > playerX) {
-          //check left, if poss move there
-          this.moveLeft()
-        } else if (cells[this.ghostIdx + 1].classList.contains('wall') === false
-          && cells.indexOf(cells[this.ghostIdx + 1]) !== this.previousIdx
-          && ghostX < playerX) {
-          //check left, if poss move there
-          this.moveRight()
-        } else {
-          //if cant get any closer force next move into cell with no wall or previous position
-          if (cells[this.ghostIdx - width].classList.contains('wall') === false
-            && cells.indexOf(cells[this.ghostIdx - width]) !== this.previousIdx) {
-            this.moveUp()
-          } else if (cells[this.ghostIdx + width].classList.contains('wall') === false && cells.indexOf(cells[this.ghostIdx + width]) !== this.previousIdx) {
-            //check down, if poss move there
-            this.moveDown()
-          } else if (cells[this.ghostIdx - 1].classList.contains('wall') === false
-            && cells.indexOf(cells[this.ghostIdx - 1]) !== this.previousIdx) {
-            //check left, if poss move there
-            this.moveLeft()
-          } else if (cells[this.ghostIdx + 1].classList.contains('wall') === false
-            && cells.indexOf(cells[this.ghostIdx + 1]) !== this.previousIdx) {
-            //check left, if poss move there
-            this.moveRight()
-          }
+        //check down, if poss move there
+        this.moveDown()
+      } else if (cells[this.ghostIdx - 1].classList.contains('wall') === false
+        && cells.indexOf(cells[this.ghostIdx - 1]) !== this.previousIdx
+        && ghostX > playerX) {
+        //check left, if poss move there
+        this.moveLeft()
+      } else if (cells[this.ghostIdx + 1].classList.contains('wall') === false
+        && cells.indexOf(cells[this.ghostIdx + 1]) !== this.previousIdx
+        && ghostX < playerX) {
+        //check left, if poss move there
+        this.moveRight()
+      }
+    }
+    forceMove() {
+      //if cant get any closer force next move into cell with no wall or previous position
+      if (cells[this.ghostIdx - width].classList.contains('wall') === false
+        && cells.indexOf(cells[this.ghostIdx - width]) !== this.previousIdx) {
+        this.moveUp()
+      } else if (cells[this.ghostIdx + width].classList.contains('wall') === false && cells.indexOf(cells[this.ghostIdx + width]) !== this.previousIdx) {
+        //check down, if poss move there
+        this.moveDown()
+      } else if (cells[this.ghostIdx - 1].classList.contains('wall') === false
+        && cells.indexOf(cells[this.ghostIdx - 1]) !== this.previousIdx) {
+        //check left, if poss move there
+        this.moveLeft()
+      } else if (cells[this.ghostIdx + 1].classList.contains('wall') === false
+        && cells.indexOf(cells[this.ghostIdx + 1]) !== this.previousIdx) {
+        //check left, if poss move there
+        this.moveRight()
+      }
+    }
+    move() {
+      this.timerId = setInterval(() => {
+        const idxCheck = this.ghostIdx
+        this.moveCloser()
+        //if the ghost cant get closer force move to next available tile
+        if (idxCheck === this.ghostIdx) {
+          this.forceMove()
         }
+
       }, 500)
     }
     changeState(newState) {
@@ -127,8 +137,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function loadGhosts() {
-    const firstGhost = new Ghost(178, playerIdx, 'normal', 'firstGhost')
-    firstGhost.move()
+    const blinky = new Ghost(231, playerIdx, 'normal', 'blinky')
+    const pinky = new Ghost(171, playerIdx, 'normal', 'pinky')
+    const inky = new Ghost(168, playerIdx, 'normal', 'inky')
+    const clyde = new Ghost(228, playerIdx, 'normal', 'clyde')
+    blinky.move()
+    pinky.move()
+    inky.move()
+    clyde.move()
   }
 
   function loadWalls() {
