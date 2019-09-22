@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   //array used for saving data
   let wallIndex = []
   let pillIndex = []
+  let energizerIndex = []
   //create a global variable to accessed to make it scalable (no magic numbers)
   const width = 20
   const grid = document.querySelector('.grid')
@@ -134,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         //check to see if pacman has been reached
         this.hasReachedPacman()
-      }, 500)
+      }, 200)
     }
     stop() {
       clearInterval(this.timerId)
@@ -189,6 +190,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function loadEnergizer() {
+    const energizerData = JSON.parse(localStorage.getItem('energizerData'))
+    //upon load cycle cells
+    for (let i = 0; i < cells.length; i++) {
+      // at each cell, check to see if the index matches any in the saved walls array
+      if (energizerData.indexOf(i) !== -1) {
+        //if so, add the energizer class
+        cells[i].classList.add('energizer')
+      }
+    }
+  }
+
   function createTiles() {
     // handle each div,\/ width squared \/ because it creates a square grid. different calc for rect
     for (let i = 0; i < width ** 2; i++) {
@@ -215,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function move(direction, timing = 500) {
+  function move(direction, timing = 200) {
     clearInterval(movementId)
     //if direction is corrected then change in a split second before carrying on
     setTimeout(function () {
@@ -321,6 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupPlayerInput()
     loadWalls()
     loadPills()
+    loadEnergizer()
     loadGhosts()
     cells[playerIdx].classList.add('player')
   }
@@ -333,6 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // clear the arrays for a new save
     wallIndex = []
     pillIndex = []
+    energizerIndex = []
     //iterate over cells
     for (let i = 0; i < cells.length; i++) {
       //if cells has class, save the index of it to another array
@@ -342,19 +357,23 @@ document.addEventListener('DOMContentLoaded', () => {
       if (cells[i].classList.contains('pill')) {
         pillIndex.push(i)
       }
+      if (cells[i].classList.contains('energizer')) {
+        energizerIndex.push(i)
+      }
     }
     localStorage.setItem('wallsData', JSON.stringify(wallIndex))
     localStorage.setItem('pillsData', JSON.stringify(pillIndex))
+    localStorage.setItem('energizerData', JSON.stringify(energizerIndex))
   }
 
   //function for editing the map
   function handleClick(e) {
     //on click add wall class to cell
     //if it already contains wall class then remove it
-    if (e.target.classList.contains('pill')) {
-      e.target.classList.remove('pill')
+    if (e.target.classList.contains('energizer')) {
+      e.target.classList.remove('energizer')
       return
-    } e.target.classList.add('pill')
+    } e.target.classList.add('energizer')
   }
 
   function setupEditorListeners() {
