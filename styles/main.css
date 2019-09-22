@@ -33,11 +33,19 @@ body {
 }
 
 .grid div.player {
-  background-image: url(../assets/sprite-sheet.png);
-  background-size: 150px;
+  background-image: url(../assets/pacmanspritesheet.png);
+  background-size: 600px;
   /* properties to be edited to animate the sprite */
-  background-position-x: 0;
-  background-position-y: 0;
+  background-position-x: -50px;
+  background-position-y: -10px;
+}
+
+.grid div.pill {
+  background-image: url(../assets/pacmanspritesheet.png);
+  background-size: 600px;
+  /* properties to be edited to animate the sprite */
+  background-position-x: -2px;
+  background-position-y: -335px;
 }
 
 .grid div.wall {

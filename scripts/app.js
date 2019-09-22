@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+  //array used for saving data
+  let wallIndex = []
+  let pillIndex = []
   //create a global variable to accessed to make it scalable (no magic numbers)
   const width = 20
   const grid = document.querySelector('.grid')
@@ -12,6 +15,24 @@ document.addEventListener('DOMContentLoaded', () => {
   let bPlayerRequest = false
   // keep direction before altered so same direction can be forced if needed
   let previousDirection = 'right'
+  //increments everytime a pill is eaten
+  let pillCounter = 0
+
+  //classes
+  class Ghost {
+    constructor(startIdx, targetIdx, state, cssClass) {
+      this.startIdx = startIdx
+      this.state = state
+      this.targetIdx = targetIdx
+      this.cssClass = cssClass
+    }
+    move() {
+      return this.width * this.height
+    }
+    changeState() {
+      return (this.width * 2) + (this.height * 2)
+    }
+  }
 
   function loadWalls() {
     const wallsData = JSON.parse(localStorage.getItem('wallsData'))
@@ -21,6 +42,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if (wallsData.indexOf(i) !== -1) {
         //if so, add the wall class
         cells[i].classList.add('wall')
+      }
+    }
+  }
+  
+  function loadPills() {
+    const pillsData = JSON.parse(localStorage.getItem('pillsData'))
+    //upon load cycle cells
+    for (let i = 0; i < cells.length; i++) {
+      // at each cell, check to see if the index matches any in the saved walls array
+      if (pillsData.indexOf(i) !== -1) {
+        //if so, add the pill class
+        cells[i].classList.add('pill')
       }
     }
   }
@@ -39,11 +72,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function eat() {
+    if (cells[playerIdx].classList.contains('pill')) {
+      cells[playerIdx].classList.remove('pill')
+      pillCounter++
+      console.log(`pills eaten: ${pillCounter}`)
+    }
+  }
+
   function move(direction, timing = 500) {
     clearInterval(movementId)
     //if direction is corrected then change in a split second before carrying on
-    setTimeout(function() { movementInterval(direction) }, 10)
-    movementId = setInterval(function() { movementInterval(direction) }, timing)
+    setTimeout(function() { 
+      movementInterval(direction) 
+    }, 10)
+    movementId = setInterval(function() {
+      movementInterval(direction) 
+    }, timing)
   }
 
   function movementInterval(direction) {
@@ -87,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
       //stop moving
       clearInterval(movementId)
     }
+    eat()
     // always set back to false after initial input
     bPlayerRequest = false
     //when moving, first thing to do is remove player from current div before moving on
@@ -118,6 +164,9 @@ document.addEventListener('DOMContentLoaded', () => {
         //move down by adding a whole row
         case 40: move('down')
           break
+        //load editor mode
+        case 69: loadEditorMode()
+          break
       }
     })
   }
@@ -126,6 +175,65 @@ document.addEventListener('DOMContentLoaded', () => {
     createTiles()
     setupPlayerInput()
     loadWalls()
+    loadPills()
   }
   startGame()
-})
+
+  //************************************************************************** */
+  //****************Editor**************************************************** */
+
+  function saveEdit() {
+    // clear the arrays for a new save
+    wallIndex = []
+    pillIndex = []
+    //iterate over cells
+    for (let i = 0; i < cells.length; i++) {
+      //if cells has class, save the index of it to another array
+      if (cells[i].classList.contains('wall')) {
+        wallIndex.push(i)
+      }
+      if (cells[i].classList.contains('pill')) {
+        pillIndex.push(i)
+      }
+    }
+    localStorage.setItem('wallsData', JSON.stringify(wallIndex))
+    localStorage.setItem('pillsData', JSON.stringify(pillIndex))
+  }
+
+  //function for editing the map
+  function handleClick(e) {
+    //on click add wall class to cell
+    //if it already contains wall class then remove it
+    if (e.target.classList.contains('pill')) {
+      e.target.classList.remove('pill')
+      return
+    } e.target.classList.add('pill')
+  }
+
+  function setupEditorListeners() {
+    //cycle cells
+    for (let i = 0; i < cells.length; i++) {
+      // at each cell add click event listener
+      cells[i].addEventListener('click', handleClick)
+    }
+
+    //keyup for once instead of continous keydown
+    document.addEventListener('keyup', (e) => {
+      bPlayerRequest = true
+      //handle user input
+      switch (e.keyCode) {
+        //save walls data
+        case 83: saveEdit()
+          break
+        //load walls data
+        case 76: loadWalls()
+          break
+      }
+    })
+  }
+
+  function loadEditorMode() {
+    setupEditorListeners()
+    alert('loaded editor mode')
+  }
+},)

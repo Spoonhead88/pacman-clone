@@ -1,5 +1,5 @@
-//array used for saving data
-//var wallIndex = []
+// //array used for saving data
+// var wallIndex = []
 
 // function saveWalls() {
 //   // clear the array for a new save
@@ -17,7 +17,7 @@
 //   console.log('wallsData should be saved. ')
 // }
 
-//function for editing the map
+// //function for editing the map
 // function handleClick(e) {
 //   //on click add wall class to cell
 //   //if it already contains wall class then remove it
@@ -27,13 +27,13 @@
 //   } e.target.classList.add('wall')
 // }
 
-//for editing the map
+// //for editing the map
 // cell.addEventListener('click', handleClick)
 
 // //save walls data
 // case 83: saveWalls()
 //   break
-//load walls data
+// load walls data
 // case 76: loadWalls()
 //   break
 
