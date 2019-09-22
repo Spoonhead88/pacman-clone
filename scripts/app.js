@@ -20,18 +20,115 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //classes
   class Ghost {
-    constructor(startIdx, targetIdx, state, cssClass) {
-      this.startIdx = startIdx
-      this.state = state
+    constructor(ghostIdx, targetIdx, state, cssClass) {
+      this.ghostIdx = ghostIdx
+      this.previousIdx = 0
       this.targetIdx = targetIdx
+      this.state = state
       this.cssClass = cssClass
+      this.timerId = 0
+
+      cells[ghostIdx].classList.add(this.cssClass)
+    }
+    moveUp() {
+      //remove cssClass from this cell before moving
+      cells[this.ghostIdx].classList.remove(this.cssClass)
+      //save reference to check next move
+      this.previousIdx = this.ghostIdx
+      // move the actual index
+      this.ghostIdx -= width
+      //place cssClass on new cell
+      cells[this.ghostIdx].classList.add(this.cssClass)
+    }
+    moveDown() {
+      //remove cssClass from this cell before moving
+      cells[this.ghostIdx].classList.remove(this.cssClass)
+      //save reference to check next move
+      this.previousIdx = this.ghostIdx
+      // move the actual index
+      this.ghostIdx += width
+      //place cssClass on new cell
+      cells[this.ghostIdx].classList.add(this.cssClass)
+    }
+    moveLeft() {
+      //remove cssClass from this cell before moving
+      cells[this.ghostIdx].classList.remove(this.cssClass)
+      //save reference to check next move
+      this.previousIdx = this.ghostIdx
+      // move the actual index
+      this.ghostIdx -= 1
+      //place cssClass on new cell
+      cells[this.ghostIdx].classList.add(this.cssClass)
+    }
+    moveRight() {
+      //remove cssClass from this cell before moving
+      cells[this.ghostIdx].classList.remove(this.cssClass)
+      //save reference to check next move
+      this.previousIdx = this.ghostIdx
+      // move the actual index
+      this.ghostIdx += 1
+      //place cssClass on new cell
+      cells[this.ghostIdx].classList.add(this.cssClass)
     }
     move() {
-      return this.width * this.height
+      this.timerId = setInterval(() => {
+        //get player and ghost coords
+        const playerX = cells[playerIdx].getBoundingClientRect().left
+        const ghostX = cells[this.ghostIdx].getBoundingClientRect().left
+        const playerY = cells[playerIdx].getBoundingClientRect().top
+        const ghostY = cells[this.ghostIdx].getBoundingClientRect().top
+        // check up, if there is no wall and not previous position, move there
+        //if the next cells index matches previous, dont move there
+        if (cells[this.ghostIdx - width].classList.contains('wall') === false
+          && cells.indexOf(cells[this.ghostIdx - width]) !== this.previousIdx
+          && ghostY > playerY) {
+          this.moveUp()
+        } else if (cells[this.ghostIdx + width].classList.contains('wall') === false 
+        && cells.indexOf(cells[this.ghostIdx + width]) !== this.previousIdx
+        && ghostY < playerY) {
+          //check down, if poss move there
+          this.moveDown()
+        } else if (cells[this.ghostIdx - 1].classList.contains('wall') === false
+          && cells.indexOf(cells[this.ghostIdx - 1]) !== this.previousIdx
+          && ghostX > playerX) {
+          //check left, if poss move there
+          this.moveLeft()
+        } else if (cells[this.ghostIdx + 1].classList.contains('wall') === false
+          && cells.indexOf(cells[this.ghostIdx + 1]) !== this.previousIdx
+          && ghostX < playerX) {
+          //check left, if poss move there
+          this.moveRight()
+        } else {
+          //if cant get any closer force next move into cell with no wall or previous position
+          if (cells[this.ghostIdx - width].classList.contains('wall') === false
+            && cells.indexOf(cells[this.ghostIdx - width]) !== this.previousIdx) {
+            this.moveUp()
+          } else if (cells[this.ghostIdx + width].classList.contains('wall') === false && cells.indexOf(cells[this.ghostIdx + width]) !== this.previousIdx) {
+            //check down, if poss move there
+            this.moveDown()
+          } else if (cells[this.ghostIdx - 1].classList.contains('wall') === false
+            && cells.indexOf(cells[this.ghostIdx - 1]) !== this.previousIdx) {
+            //check left, if poss move there
+            this.moveLeft()
+          } else if (cells[this.ghostIdx + 1].classList.contains('wall') === false
+            && cells.indexOf(cells[this.ghostIdx + 1]) !== this.previousIdx) {
+            //check left, if poss move there
+            this.moveRight()
+          }
+        }
+      }, 500)
     }
-    changeState() {
-      return (this.width * 2) + (this.height * 2)
+    changeState(newState) {
+      this.state = newState
     }
+    changeTarget(newTarget) {
+      this.targetIdx = newTarget
+    }
+  }
+
+  function loadGhosts() {
+    const firstGhost = new Ghost(178, playerIdx, 'normal', 'firstGhost')
+    firstGhost.move()
   }
 
   function loadWalls() {
@@ -45,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   }
-  
+
   function loadPills() {
     const pillsData = JSON.parse(localStorage.getItem('pillsData'))
     //upon load cycle cells
@@ -63,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < width ** 2; i++) {
       //create object
       const cell = document.createElement('DIV')
-      
+
       //add cell to grid div
       grid.appendChild(cell)
 
@@ -76,23 +173,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cells[playerIdx].classList.contains('pill')) {
       cells[playerIdx].classList.remove('pill')
       pillCounter++
-      console.log(`pills eaten: ${pillCounter}`)
     }
   }
 
   function move(direction, timing = 500) {
     clearInterval(movementId)
     //if direction is corrected then change in a split second before carrying on
-    setTimeout(function() { 
-      movementInterval(direction) 
+    setTimeout(function () {
+      movementInterval(direction)
     }, 10)
-    movementId = setInterval(function() {
-      movementInterval(direction) 
+    movementId = setInterval(function () {
+      movementInterval(direction)
     }, timing)
   }
 
   function movementInterval(direction) {
-    console.log('inside movement interval. ')
     //store this so that we can stay if needed and for removing the class after decision
     const currentIdx = playerIdx
 
@@ -111,20 +206,14 @@ document.addEventListener('DOMContentLoaded', () => {
       case 'down': playerIdx += width
         break
     }
-
-    console.log(playerIdx)
-
     //check to see if this next index is wall, if so, dont move
     if (cells[playerIdx].classList.contains('wall')) {
       //stay where it is
       playerIdx = currentIdx
       //if player tries to change direction into a wall keep moving in current direction
       if (bPlayerRequest) {
-        //do not clear interval, carry on in same direction
+        //carry on in same direction
         bPlayerRequest = false
-        //clearInterval(movementId)
-        console.log('should move previous direction')
-        console.log(previousDirection)
         clearInterval(movementId)
         move(previousDirection)
         return
@@ -176,6 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupPlayerInput()
     loadWalls()
     loadPills()
+    loadGhosts()
   }
   startGame()
 
@@ -236,4 +326,4 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEditorListeners()
     alert('loaded editor mode')
   }
-},)
+})
