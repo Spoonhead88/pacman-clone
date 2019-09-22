@@ -3,15 +3,18 @@
 - create map
 - pacman keeps moving in a direction until inputs is changed or hits wall
 - player is able to move through map and stops at walls until further input
-- implement food dots
-- implement fruit on a timer
+- implement pills counter
 - put blinky on the map with basic movement
+- win/lose condition
+- blinky targets pacman
+- implement the other ghosts with starting positions
 
 # -------------------------------------------
 
-- blinky targets pacman
+- tunnels
+- implement fruit on a timer
 - implement energizer dots
-- blinky changes targets from pm to his corner
-- implement the other ghosts with starting positions
 - get each ghost to start on counter and timer
+- frightened state
+- scatter state
 - ghosts have 3 states

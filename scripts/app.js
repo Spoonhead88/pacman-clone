@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // array to fill with the divs
   const cells = []
   // store player index globally
-  let playerIdx = 21
+  let playerIdx = 0
   //timerId for movement
   let movementId = 0
   //boolean flag for movement func
@@ -17,6 +17,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let previousDirection = 'right'
   //increments everytime a pill is eaten
   let pillCounter = 0
+  let totalPills
+  //ghosts
+  let blinky
+  let pinky
+  let inky
+  let clyde
 
   //classes
   class Ghost {
@@ -104,7 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (cells[this.ghostIdx - width].classList.contains('wall') === false
         && cells.indexOf(cells[this.ghostIdx - width]) !== this.previousIdx) {
         this.moveUp()
-      } else if (cells[this.ghostIdx + width].classList.contains('wall') === false && cells.indexOf(cells[this.ghostIdx + width]) !== this.previousIdx) {
+      } else if (cells[this.ghostIdx + width].classList.contains('wall') === false 
+        && cells.indexOf(cells[this.ghostIdx + width]) !== this.previousIdx) {
         //check down, if poss move there
         this.moveDown()
       } else if (cells[this.ghostIdx - 1].classList.contains('wall') === false
@@ -125,8 +132,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (idxCheck === this.ghostIdx) {
           this.forceMove()
         }
-
+        //check to see if pacman has been reached
+        this.hasReachedPacman()
       }, 500)
+    }
+    stop() {
+      clearInterval(this.timerId)
+      cells[this.ghostIdx].classList.remove(this.cssClass)
+    }
+    hasReachedPacman() {
+      if (playerIdx === this.ghostIdx) {
+        gameOver()
+      }
     }
     changeState(newState) {
       this.state = newState
@@ -137,10 +154,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function loadGhosts() {
-    const blinky = new Ghost(231, playerIdx, 'normal', 'blinky')
-    const pinky = new Ghost(171, playerIdx, 'normal', 'pinky')
-    const inky = new Ghost(168, playerIdx, 'normal', 'inky')
-    const clyde = new Ghost(228, playerIdx, 'normal', 'clyde')
+    blinky = new Ghost(231, playerIdx, 'normal', 'blinky')
+    pinky = new Ghost(171, playerIdx, 'normal', 'pinky')
+    inky = new Ghost(168, playerIdx, 'normal', 'inky')
+    clyde = new Ghost(228, playerIdx, 'normal', 'clyde')
     blinky.move()
     pinky.move()
     inky.move()
@@ -161,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function loadPills() {
     const pillsData = JSON.parse(localStorage.getItem('pillsData'))
+    totalPills = pillsData.length
     //upon load cycle cells
     for (let i = 0; i < cells.length; i++) {
       // at each cell, check to see if the index matches any in the saved walls array
@@ -189,6 +207,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cells[playerIdx].classList.contains('pill')) {
       cells[playerIdx].classList.remove('pill')
       pillCounter++
+    }
+    if (pillCounter === totalPills) {
+      if (confirm('You won, play again?')) {
+        startGame()
+      }
     }
   }
 
@@ -248,40 +271,58 @@ document.addEventListener('DOMContentLoaded', () => {
     previousDirection = direction
   }
 
-  function setupPlayerInput() {
-    //playerIdx currently at 21 so start the player there
-    cells[playerIdx].classList.add('player')
+  function inputHandler(e) {
+    bPlayerRequest = true
+    //handle user input
+    switch (e.keyCode) {
+      //move left
+      case 37: move('left')
+        break
+      //go up a whole row, but not past zero
+      case 38: move('up')
+        break
+      //move right, -1 because cpu starts at 0
+      case 39: move('right')
+        break
+      //move down by adding a whole row
+      case 40: move('down')
+        break
+      //load editor mode
+      case 69: loadEditorMode()
+        break
+    }
+  }
 
+  function setupPlayerInput() {
     //keyup for once instead of continous keydown
-    document.addEventListener('keyup', (e) => {
-      bPlayerRequest = true
-      //handle user input
-      switch (e.keyCode) {
-        //move left
-        case 37: move('left')
-          break
-        //go up a whole row, but not past zero
-        case 38: move('up')
-          break
-        //move right, -1 because cpu starts at 0
-        case 39: move('right')
-          break
-        //move down by adding a whole row
-        case 40: move('down')
-          break
-        //load editor mode
-        case 69: loadEditorMode()
-          break
-      }
-    })
+    document.addEventListener('keyup', inputHandler)
+  }
+
+  function gameOver() {
+    console.log('game over')
+    clearInterval(movementId)
+    //stop the ghosts 
+    blinky.stop()
+    pinky.stop()
+    inky.stop()
+    clyde.stop()
+    //stop player
+    cells[playerIdx].classList.remove('player')
+    document.removeEventListener('keyup', inputHandler)
+    //display game over message
+    //ask to play again
+    if (confirm('Game Over, Play Again?')) startGame()
   }
 
   function startGame() {
+    pillCounter = 0
+    playerIdx = 21
     createTiles()
     setupPlayerInput()
     loadWalls()
     loadPills()
     loadGhosts()
+    cells[playerIdx].classList.add('player')
   }
   startGame()
 

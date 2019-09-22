@@ -65,7 +65,7 @@ body {
   background-size: 600px;
   /* properties to be edited to animate the sprite */
   background-position-x: -12px;
-  background-position-y: -160px;
+  background-position-y: -197px;
 }
 
 .grid div.inky {
@@ -73,7 +73,7 @@ body {
   background-size: 600px;
   /* properties to be edited to animate the sprite */
   background-position-x: -12px;
-  background-position-y: -160px;
+  background-position-y: -235px;
 }
 
 .grid div.clyde {
@@ -81,7 +81,7 @@ body {
   background-size: 600px;
   /* properties to be edited to animate the sprite */
   background-position-x: -12px;
-  background-position-y: -160px;
+  background-position-y: -270px;
 }
 
 
