@@ -18,3 +18,5 @@
 - frightened state
 - scatter state
 - ghosts have 3 states
+- refactor to move position
+- refactor to check and filter an array of tiles

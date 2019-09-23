@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', () => {
   //array used for saving data
   let wallIndex = []
@@ -33,6 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
       this.targetIdx = targetIdx
       this.state = state
       this.cssClass = cssClass
+      this.normalCss = cssClass
+      this.frightenedCss = 'frightened'
       this.timerId = 0
 
       cells[ghostIdx].classList.add(this.cssClass)
@@ -79,29 +82,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     moveCloser() {
       //get player and ghost coords
-      const playerX = cells[playerIdx].getBoundingClientRect().left
+      const targetX = cells[this.targetIdx].getBoundingClientRect().left
       const ghostX = cells[this.ghostIdx].getBoundingClientRect().left
-      const playerY = cells[playerIdx].getBoundingClientRect().top
+      const targetY = cells[this.targetIdx].getBoundingClientRect().top
       const ghostY = cells[this.ghostIdx].getBoundingClientRect().top
       // check up, if there is no wall and not previous position, move there
       //if the next cells index matches previous, dont move there
       if (cells[this.ghostIdx - width].classList.contains('wall') === false
         && cells.indexOf(cells[this.ghostIdx - width]) !== this.previousIdx
-        && ghostY > playerY) {
+        && ghostY > targetY) {
         this.moveUp()
       } else if (cells[this.ghostIdx + width].classList.contains('wall') === false
         && cells.indexOf(cells[this.ghostIdx + width]) !== this.previousIdx
-        && ghostY < playerY) {
+        && ghostY < targetY) {
         //check down, if poss move there
         this.moveDown()
       } else if (cells[this.ghostIdx - 1].classList.contains('wall') === false
         && cells.indexOf(cells[this.ghostIdx - 1]) !== this.previousIdx
-        && ghostX > playerX) {
+        && ghostX > targetX) {
         //check left, if poss move there
         this.moveLeft()
       } else if (cells[this.ghostIdx + 1].classList.contains('wall') === false
         && cells.indexOf(cells[this.ghostIdx + 1]) !== this.previousIdx
-        && ghostX < playerX) {
+        && ghostX < targetX) {
         //check left, if poss move there
         this.moveRight()
       }
@@ -127,11 +130,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     move() {
       this.timerId = setInterval(() => {
+        //update target idx to player idx
+        this.targetIdx = playerIdx
+        //chekc how to move depending on which state this ghost is in
         const idxCheck = this.ghostIdx
-        this.moveCloser()
-        //if the ghost cant get closer force move to next available tile
-        if (idxCheck === this.ghostIdx) {
-          this.forceMove()
+        //handle user input
+        switch (this.state) {
+          //move left, only if but not past zero
+          case 'chase':
+            this.moveCloser()
+            //if the ghost cant get closer force move to next available tile
+            if (idxCheck === this.ghostIdx) {
+              this.forceMove()
+            }
+            break
+          //go up a whole row, but not past zero
+          case 'frightened': 
+            console.log('ghosts are moving randomly')
+            //make target a randomized index
+            this.targetIdx = Math.floor(Math.random() * Math.floor(400))
+            //same as chase but with a randomized target
+            this.moveCloser()
+            //if the ghost cant get closer force move to next available tile
+            if (idxCheck === this.ghostIdx) {
+              this.forceMove()
+            }
+            break
         }
         //check to see if pacman has been reached
         this.hasReachedPacman()
@@ -139,26 +163,52 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     stop() {
       clearInterval(this.timerId)
+      console.log('css inside of stop()', this.cssClass)
       cells[this.ghostIdx].classList.remove(this.cssClass)
     }
     hasReachedPacman() {
+      // handle pacman differently in each state
       if (playerIdx === this.ghostIdx) {
-        gameOver()
+        switch (this.state) {
+          //gameover for pacman if the ghosts are chasing
+          case 'chase':
+            gameOver()
+            break
+          //if ghosts are frightened, gmae over for them
+          case 'frightened':
+            this.stop()
+            break
+        }
       }
+      
     }
     changeState(newState) {
       this.state = newState
+      switch (newState) {
+        case 'normal':
+          this.cssClass = this.normalCss
+          break
+        case 'frightened':
+          //remove, change ad re add the cssClass
+          cells[this.ghostIdx].classList.remove(this.cssClass)
+          this.cssClass = this.frightenedCss
+          cells[this.ghostIdx].classList.add(this.cssClass)
+          break
+      }
     }
     changeTarget(newTarget) {
       this.targetIdx = newTarget
     }
+    changeCssClass(newCssClass) {
+      this.cssClass = newCssClass
+    }
   }
 
   function loadGhosts() {
-    blinky = new Ghost(231, playerIdx, 'normal', 'blinky')
-    pinky = new Ghost(171, playerIdx, 'normal', 'pinky')
-    inky = new Ghost(168, playerIdx, 'normal', 'inky')
-    clyde = new Ghost(228, playerIdx, 'normal', 'clyde')
+    blinky = new Ghost(231, playerIdx, 'chase', 'blinky')
+    pinky = new Ghost(171, playerIdx, 'chase', 'pinky')
+    inky = new Ghost(168, playerIdx, 'chase', 'inky')
+    clyde = new Ghost(228, playerIdx, 'chase', 'clyde')
     blinky.move()
     pinky.move()
     inky.move()
@@ -221,6 +271,15 @@ document.addEventListener('DOMContentLoaded', () => {
       cells[playerIdx].classList.remove('pill')
       pillCounter++
     }
+    if (cells[playerIdx].classList.contains('energizer')) {
+      cells[playerIdx].classList.remove('energizer')
+      // set the ghost to frightened mode
+      blinky.changeState('frightened')
+      pinky.changeState('frightened')
+      inky.changeState('frightened')
+      clyde.changeState('frightened')
+    }
+
     if (pillCounter === totalPills) {
       if (confirm('You won, play again?')) {
         startGame()
@@ -273,6 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
       //stop moving
       clearInterval(movementId)
     }
+    // eat whatever is on this tile
     eat()
     // always set back to false after initial input
     bPlayerRequest = false
