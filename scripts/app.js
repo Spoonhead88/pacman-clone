@@ -1,6 +1,5 @@
 
 document.addEventListener('DOMContentLoaded', () => {
-
   //array used for saving data
   let wallIndex = []
   let pillIndex = []
@@ -29,10 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //classes
   class Ghost {
-    constructor(ghostIdx, targetIdx, state, cssClass) {
+    constructor(ghostIdx, targetIdx, state, cssClass, cornerIdx) {
       this.ghostIdx = ghostIdx
       this.previousIdx = 0
       this.targetIdx = targetIdx
+      this.cornerIdx = cornerIdx
       this.state = state
       this.cssClass = cssClass
       this.normalCss = cssClass
@@ -162,6 +162,14 @@ document.addEventListener('DOMContentLoaded', () => {
               this.forceMove()
             }
             break
+          case 'scatter':
+            //set the target to corresponding corner
+            this.targetIdx = this.cornerIdx
+            this.moveCloser()
+            if (idxCheck === this.ghostIdx) {
+              this.forceMove()
+            }
+            break
         }
         //check to see if pacman has been reached
         this.hasReachedPacman()
@@ -205,8 +213,13 @@ document.addEventListener('DOMContentLoaded', () => {
         case 'dead':
           this.stop()
           clearTimeout(this.frightTimer) 
-          console.log(this, 'is dead. long live ', this)
           break
+        // case 'scatter':
+        //   this.stop()
+        //   this.targetIdx = this.cornerIdx
+        //   this.move()
+        //   console.log(this.targetIdx)
+        //   break
       }
     }
     changeTarget(newTarget) {
@@ -224,10 +237,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function loadGhosts() {
-    blinky = new Ghost(231, playerIdx, 'chase', 'blinky')
-    pinky = new Ghost(171, playerIdx, 'chase', 'pinky')
-    inky = new Ghost(168, playerIdx, 'chase', 'inky')
-    clyde = new Ghost(228, playerIdx, 'chase', 'clyde')
+    blinky = new Ghost(231, playerIdx, 'chase', 'blinky', 14)
+    pinky = new Ghost(171, playerIdx, 'chase', 'pinky', 42)
+    inky = new Ghost(168, playerIdx, 'chase', 'inky', 317)
+    clyde = new Ghost(228, playerIdx, 'chase', 'clyde', 302)
     blinky.move()
     pinky.move()
     inky.move()
@@ -295,10 +308,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cells[playerIdx].classList.contains('energizer')) {
       cells[playerIdx].classList.remove('energizer')
       // set the ghost to frightened mode
-      if (blinky.getState() !== 'dead') blinky.changeState('frightened')
-      if (pinky.getState() !== 'dead') pinky.changeState('frightened')
-      if (inky.getState() !== 'dead') inky.changeState('frightened')
-      if (clyde.getState() !== 'dead') clyde.changeState('frightened')
+      if (blinky.getState() !== 'dead') blinky.changeState('scatter')
+      if (pinky.getState() !== 'dead') pinky.changeState('scatter')
+      if (inky.getState() !== 'dead') inky.changeState('scatter')
+      if (clyde.getState() !== 'dead') clyde.changeState('scatter')
     }
     // eat ghosts
     if (playerIdx === blinky.getIdx() && blinky.getState() === 'frightened') {
