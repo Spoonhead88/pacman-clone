@@ -1,5 +1,6 @@
 
 document.addEventListener('DOMContentLoaded', () => {
+
   //array used for saving data
   let wallIndex = []
   let pillIndex = []
@@ -37,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
       this.normalCss = cssClass
       this.frightenedCss = 'frightened'
       this.timerId = 0
+      this.frightTimer = 0
       //millisecond interval between movements
       this.movementSpeed = 200
 
@@ -171,19 +173,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     hasReachedPacman() {
       // handle pacman differently in each state
-      if (playerIdx === this.ghostIdx) {
-        switch (this.state) {
-          //gameover for pacman if the ghosts are chasing
-          case 'chase':
-            gameOver()
-            break
-          //if ghosts are frightened, gmae over for them
-          case 'frightened':
-            this.stop()
-            break
-        }
+      if (playerIdx === this.ghostIdx && this.state === 'chase') {
+        gameOver()
       }
-      
     }
     changeState(newState) {
       this.state = newState
@@ -191,8 +183,8 @@ document.addEventListener('DOMContentLoaded', () => {
         case 'chase':
           this.stop()
           this.movementSpeed = 200
-          //cells[this.ghostIdx].classList.remove(this.cssClass)
           this.cssClass = this.normalCss
+          //add this immediately instead of waiting for move to do it
           cells[this.ghostIdx].classList.add(this.cssClass)
           this.move()
           break
@@ -202,17 +194,32 @@ document.addEventListener('DOMContentLoaded', () => {
           this.movementSpeed = 600
           //cells[this.ghostIdx].classList.remove(this.cssClass)
           this.cssClass = this.frightenedCss
+          //add this immediately instead of waiting for move to do it
           cells[this.ghostIdx].classList.add(this.cssClass)
+          //after 5 seconds go back to chase
+          this.frightTimer = setTimeout(() => {
+            this.changeState('chase')
+          }, 5000)
           this.move()
           break
+        case 'dead':
+          this.stop()
+          clearTimeout(this.frightTimer) 
+          console.log(this, 'is dead. long live ', this)
+          break
       }
-      console.log('change state ran')
     }
     changeTarget(newTarget) {
       this.targetIdx = newTarget
     }
     changeCssClass(newCssClass) {
       this.cssClass = newCssClass
+    }
+    getState() {
+      return this.state
+    }
+    getIdx() {
+      return this.ghostIdx
     }
   }
 
@@ -279,25 +286,33 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function eat() {
+    //eat pill and increment counter
     if (cells[playerIdx].classList.contains('pill')) {
       cells[playerIdx].classList.remove('pill')
       pillCounter++
     }
+    //eat enerizer and scare ghosts
     if (cells[playerIdx].classList.contains('energizer')) {
       cells[playerIdx].classList.remove('energizer')
       // set the ghost to frightened mode
-      blinky.changeState('frightened')
-      pinky.changeState('frightened')
-      inky.changeState('frightened')
-      clyde.changeState('frightened')
-      setTimeout(() => {
-        blinky.changeState('chase')
-        pinky.changeState('chase')
-        inky.changeState('chase')
-        clyde.changeState('chase')
-      }, 5000)
+      if (blinky.getState() !== 'dead') blinky.changeState('frightened')
+      if (pinky.getState() !== 'dead') pinky.changeState('frightened')
+      if (inky.getState() !== 'dead') inky.changeState('frightened')
+      if (clyde.getState() !== 'dead') clyde.changeState('frightened')
     }
-
+    // eat ghosts
+    if (playerIdx === blinky.getIdx() && blinky.getState() === 'frightened') {
+      blinky.changeState('dead')
+    }
+    if (playerIdx === inky.getIdx() && inky.getState() === 'frightened') {
+      inky.changeState('dead')
+    }
+    if (playerIdx === pinky.getIdx() && pinky.getState() === 'frightened') {
+      pinky.changeState('dead')
+    }
+    if (playerIdx === clyde.getIdx() && clyde.getState() === 'frightened') {
+      clyde.changeState('dead')
+    }
     if (pillCounter === totalPills) {
       if (confirm('You won, play again?')) {
         startGame()
