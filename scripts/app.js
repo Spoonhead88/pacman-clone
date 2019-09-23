@@ -37,6 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
       this.normalCss = cssClass
       this.frightenedCss = 'frightened'
       this.timerId = 0
+      //millisecond interval between movements
+      this.movementSpeed = 200
 
       cells[ghostIdx].classList.add(this.cssClass)
     }
@@ -130,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     move() {
       this.timerId = setInterval(() => {
+        console.log('should have moved one interval. ')
         //update target idx to player idx
         this.targetIdx = playerIdx
         //chekc how to move depending on which state this ghost is in
@@ -139,6 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
           //move left, only if but not past zero
           case 'chase':
             this.moveCloser()
+            //make the target pac man again
+            this.targetIdx = playerIdx
             //if the ghost cant get closer force move to next available tile
             if (idxCheck === this.ghostIdx) {
               this.forceMove()
@@ -146,7 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
             break
           //go up a whole row, but not past zero
           case 'frightened': 
-            console.log('ghosts are moving randomly')
             //make target a randomized index
             this.targetIdx = Math.floor(Math.random() * Math.floor(400))
             //same as chase but with a randomized target
@@ -159,11 +163,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         //check to see if pacman has been reached
         this.hasReachedPacman()
-      }, 200)
+      }, this.movementSpeed)
     }
     stop() {
       clearInterval(this.timerId)
-      console.log('css inside of stop()', this.cssClass)
       cells[this.ghostIdx].classList.remove(this.cssClass)
     }
     hasReachedPacman() {
@@ -185,16 +188,25 @@ document.addEventListener('DOMContentLoaded', () => {
     changeState(newState) {
       this.state = newState
       switch (newState) {
-        case 'normal':
+        case 'chase':
+          this.stop()
+          this.movementSpeed = 200
+          //cells[this.ghostIdx].classList.remove(this.cssClass)
           this.cssClass = this.normalCss
+          cells[this.ghostIdx].classList.add(this.cssClass)
+          this.move()
           break
         case 'frightened':
           //remove, change ad re add the cssClass
-          cells[this.ghostIdx].classList.remove(this.cssClass)
+          this.stop()
+          this.movementSpeed = 600
+          //cells[this.ghostIdx].classList.remove(this.cssClass)
           this.cssClass = this.frightenedCss
           cells[this.ghostIdx].classList.add(this.cssClass)
+          this.move()
           break
       }
+      console.log('change state ran')
     }
     changeTarget(newTarget) {
       this.targetIdx = newTarget
@@ -278,6 +290,12 @@ document.addEventListener('DOMContentLoaded', () => {
       pinky.changeState('frightened')
       inky.changeState('frightened')
       clyde.changeState('frightened')
+      setTimeout(() => {
+        blinky.changeState('chase')
+        pinky.changeState('chase')
+        inky.changeState('chase')
+        clyde.changeState('chase')
+      }, 5000)
     }
 
     if (pillCounter === totalPills) {

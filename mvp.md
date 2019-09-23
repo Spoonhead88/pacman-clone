@@ -20,3 +20,9 @@
 - ghosts have 3 states
 - refactor to move position
 - refactor to check and filter an array of tiles
+
+# now
+
+- frightened back to normal after set amount of time
+- perform check by pacman to eat ghost to fix timing issue
+- remove issue where ghost re appear after eating energizer
