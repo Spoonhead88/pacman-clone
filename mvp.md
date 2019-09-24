@@ -11,9 +11,10 @@
 
 # now
 
-- scatter/chase remembers remaining time
+- find multiple ghost problem
+  //time remaining in chase carried over to new game
 
-//use a previous state variable
+
 
 
 

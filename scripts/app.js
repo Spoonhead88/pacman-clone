@@ -20,11 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
   //increments everytime a pill is eaten
   let pillCounter = 0
   let totalPills
-  //ghosts
-  let blinky
-  let pinky
-  let inky
-  let clyde
 
   //classes
   class Ghost {
@@ -47,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
       this.timeCounter = 0
       this.previousState = 0
 
-      cells[ghostIdx].classList.add(this.cssClass)
+      //cells[ghostIdx].classList.add(this.cssClass)
     }
     moveUp() {
       //remove cssClass from this cell before moving
@@ -238,13 +233,17 @@ document.addEventListener('DOMContentLoaded', () => {
           break
         case 'dead':
           this.stop()
-          clearTimeout(this.frightTimer) 
+          this.clearTimers()
           break
         case 'scatter':
           this.previousState = 'scatter'
           clearInterval(this.timeCounter)
           console.log(this.cssClass, ' is on scatter')
           this.stop()
+          this.movementSpeed = 200
+          this.cssClass = this.normalCss
+          //add this immediately instead of waiting for move to do it
+          cells[this.ghostIdx].classList.add(this.cssClass)
           // scatter for 7 seconds then go back to chase
           this.scatterTimer = setTimeout(() => {
             this.changeState('chase')
@@ -259,6 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } 
           }, 1000)
           this.move()
+          break
       }
     }
     changeTarget(newTarget) {
@@ -273,23 +273,48 @@ document.addEventListener('DOMContentLoaded', () => {
     getIdx() {
       return this.ghostIdx
     }
+    setIdx(newIdx) {
+      this.ghostIdx = newIdx
+    }
+    setInitialState(newState) {
+      this.state = newState
+    }
+    setCornerIdx(newCornerIdx) {
+      this.cornerIdx = newCornerIdx
+    }
+    clearTimers() {
+      clearInterval(this.timerId)
+      clearInterval(this.timeCounter)
+      clearTimeout(this.chaseTimer)
+      clearTimeout(this.chaseTimer)
+      clearTimeout(this.scatterTimer)
+      clearTimeout(this.frightTimer)
+    }
+    reset(newIdx, newTarget, newState, newCssClass, newCornerIdx) {
+      cells[this.ghostIdx].classList.remove(this.cssClass)
+      this.setIdx(newIdx)
+      this.changeTarget(newTarget)
+      this.setInitialState(newState)
+      this.changeCssClass(newCssClass)
+      this.setCornerIdx(newCornerIdx)
+      this.clearTimers()
+      cells[this.ghostIdx].classList.add(this.cssClass)
+      this.move()
+      //do this to kick off initial timers
+      this.changeState('scatter')
+    }
   }
 
-  function loadGhosts() {
-    blinky = new Ghost(231, playerIdx, 'scatter', 'blinky', 14)
-    pinky = new Ghost(171, playerIdx, 'scatter', 'pinky', 42)
-    inky = new Ghost(168, playerIdx, 'scatter', 'inky', 317)
-    clyde = new Ghost(228, playerIdx, 'scatter', 'clyde', 302)
-    blinky.move()
-    pinky.move()
-    inky.move()
-    clyde.move()
+  const blinky = new Ghost(231, playerIdx, 'scatter', 'blinky', 14)
+  const pinky = new Ghost(171, playerIdx, 'scatter', 'pinky', 42)
+  const inky = new Ghost(168, playerIdx, 'scatter', 'inky', 317)
+  const clyde = new Ghost(228, playerIdx, 'scatter', 'clyde', 302)
 
-    //use change state to kick off inital state timers
-    blinky.changeState('scatter')
-    pinky.changeState('scatter')
-    inky.changeState('scatter')
-    clyde.changeState('scatter')
+  function loadGhosts() {
+    blinky.reset(231, playerIdx, 'scatter', 'blinky', 14)
+    pinky.reset(171, playerIdx, 'scatter', 'pinky', 42)
+    inky.reset(168, playerIdx, 'scatter', 'inky', 317)
+    clyde.reset(228, playerIdx, 'scatter', 'clyde', 302)
   }
 
   function loadWalls() {
@@ -470,6 +495,7 @@ document.addEventListener('DOMContentLoaded', () => {
     pinky.stop()
     inky.stop()
     clyde.stop()
+
     //stop player
     cells[playerIdx].classList.remove('player')
     document.removeEventListener('keyup', inputHandler)
