@@ -43,8 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
       this.chaseTimer = 0
       //millisecond interval between movements
       this.movementSpeed = 200
-      this.timeRemaining = 0
+      this.timeElapsed = 0
       this.timeCounter = 0
+      this.previousState = 0
 
       cells[ghostIdx].classList.add(this.cssClass)
     }
@@ -192,6 +193,8 @@ document.addEventListener('DOMContentLoaded', () => {
       this.state = newState
       switch (newState) {
         case 'chase':
+          //save previous state to go back after fright
+          this.previousState = 'chase'
           clearInterval(this.timeCounter)
           console.log(this.cssClass, ' is on chase')
           this.stop()
@@ -202,13 +205,13 @@ document.addEventListener('DOMContentLoaded', () => {
           //after 20 seconds change back to scatter
           this.chaseTimer = setTimeout(() => {
             this.changeState('scatter')
-          }, 20000)
+          }, 20000 - this.timeElapsed)
           //keep track of time remaining so it can start where it left
           this.timeCounter = setInterval(() => {
-            this.timeRemaining += 1000
-            console.log('time remaining in chase: ',this.timeRemaining)
-            if (this.timeRemaining === 19000) {
-              this.timeRemaining = 0
+            this.timeElapsed += 1000
+            console.log('time remaining in chase: ',this.timeElapsed)
+            if (this.timeElapsed === 19000) {
+              this.timeElapsed = 0
             }
           }, 1000)
           this.move()
@@ -222,13 +225,14 @@ document.addEventListener('DOMContentLoaded', () => {
           cells[this.ghostIdx].classList.add(this.cssClass)
           //clear the timeCounter interval and save the time remaining
           clearInterval(this.timeCounter)
-          console.log('frightened saved time remaining as: ', this.timeRemaining)
+          console.log('frightened saved time remaining as: ', this.timeElapsed)
           //clear any chase or scatter timers
           clearTimeout(this.chaseTimer)
           clearTimeout(this.scatterTimer)
           //after 5 seconds go back to chase
           this.frightTimer = setTimeout(() => {
-            this.changeState('chase')
+            //use previous state variable to go back and complete timing
+            this.changeState(this.previousState)
           }, 5000)
           this.move()
           break
@@ -237,19 +241,21 @@ document.addEventListener('DOMContentLoaded', () => {
           clearTimeout(this.frightTimer) 
           break
         case 'scatter':
+          this.previousState = 'scatter'
           clearInterval(this.timeCounter)
           console.log(this.cssClass, ' is on scatter')
           this.stop()
           // scatter for 7 seconds then go back to chase
           this.scatterTimer = setTimeout(() => {
             this.changeState('chase')
-          }, 7000)
+            console.log('logging timeElapsed: ', this.timeElapsed)
+          }, 7000 - this.timeElapsed)
           //keep track of time remaining so it can start where it left
           this.timeCounter = setInterval(() => {
-            this.timeRemaining += 1000
-            console.log('time remaining in scatter: ',this.timeRemaining)
-            if (this.timeRemaining === 6000) {
-              this.timeRemaining = 0
+            this.timeElapsed += 1000
+            console.log('time remaining in scatter: ',this.timeElapsed)
+            if (this.timeElapsed === 6000) {
+              this.timeElapsed = 0
             } 
           }, 1000)
           this.move()
