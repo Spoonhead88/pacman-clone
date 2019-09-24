@@ -39,8 +39,12 @@ document.addEventListener('DOMContentLoaded', () => {
       this.frightenedCss = 'frightened'
       this.timerId = 0
       this.frightTimer = 0
+      this.scatterTimer = 0
+      this.chaseTimer = 0
       //millisecond interval between movements
       this.movementSpeed = 200
+      this.timeRemaining = 0
+      this.timeCounter = 0
 
       cells[ghostIdx].classList.add(this.cssClass)
     }
@@ -134,7 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     move() {
       this.timerId = setInterval(() => {
-        console.log('should have moved one interval. ')
         //update target idx to player idx
         this.targetIdx = playerIdx
         //chekc how to move depending on which state this ghost is in
@@ -180,8 +183,8 @@ document.addEventListener('DOMContentLoaded', () => {
       cells[this.ghostIdx].classList.remove(this.cssClass)
     }
     hasReachedPacman() {
-      // handle pacman differently in each state
-      if (playerIdx === this.ghostIdx && this.state === 'chase') {
+      // if made contact with pacman and the ghost is in chase or scatter mode then game over
+      if (playerIdx === this.ghostIdx && (this.state === 'chase' || this.state === 'scatter')) {
         gameOver()
       }
     }
@@ -189,21 +192,40 @@ document.addEventListener('DOMContentLoaded', () => {
       this.state = newState
       switch (newState) {
         case 'chase':
+          clearInterval(this.timeCounter)
+          console.log(this.cssClass, ' is on chase')
           this.stop()
           this.movementSpeed = 200
           this.cssClass = this.normalCss
           //add this immediately instead of waiting for move to do it
           cells[this.ghostIdx].classList.add(this.cssClass)
+          //after 20 seconds change back to scatter
+          this.chaseTimer = setTimeout(() => {
+            this.changeState('scatter')
+          }, 20000)
+          //keep track of time remaining so it can start where it left
+          this.timeCounter = setInterval(() => {
+            this.timeRemaining += 1000
+            console.log('time remaining in chase: ',this.timeRemaining)
+            if (this.timeRemaining === 19000) {
+              this.timeRemaining = 0
+            }
+          }, 1000)
           this.move()
           break
         case 'frightened':
           //remove, change ad re add the cssClass
           this.stop()
           this.movementSpeed = 600
-          //cells[this.ghostIdx].classList.remove(this.cssClass)
           this.cssClass = this.frightenedCss
           //add this immediately instead of waiting for move to do it
           cells[this.ghostIdx].classList.add(this.cssClass)
+          //clear the timeCounter interval and save the time remaining
+          clearInterval(this.timeCounter)
+          console.log('frightened saved time remaining as: ', this.timeRemaining)
+          //clear any chase or scatter timers
+          clearTimeout(this.chaseTimer)
+          clearTimeout(this.scatterTimer)
           //after 5 seconds go back to chase
           this.frightTimer = setTimeout(() => {
             this.changeState('chase')
@@ -214,12 +236,23 @@ document.addEventListener('DOMContentLoaded', () => {
           this.stop()
           clearTimeout(this.frightTimer) 
           break
-        // case 'scatter':
-        //   this.stop()
-        //   this.targetIdx = this.cornerIdx
-        //   this.move()
-        //   console.log(this.targetIdx)
-        //   break
+        case 'scatter':
+          clearInterval(this.timeCounter)
+          console.log(this.cssClass, ' is on scatter')
+          this.stop()
+          // scatter for 7 seconds then go back to chase
+          this.scatterTimer = setTimeout(() => {
+            this.changeState('chase')
+          }, 7000)
+          //keep track of time remaining so it can start where it left
+          this.timeCounter = setInterval(() => {
+            this.timeRemaining += 1000
+            console.log('time remaining in scatter: ',this.timeRemaining)
+            if (this.timeRemaining === 6000) {
+              this.timeRemaining = 0
+            } 
+          }, 1000)
+          this.move()
       }
     }
     changeTarget(newTarget) {
@@ -237,14 +270,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function loadGhosts() {
-    blinky = new Ghost(231, playerIdx, 'chase', 'blinky', 14)
-    pinky = new Ghost(171, playerIdx, 'chase', 'pinky', 42)
-    inky = new Ghost(168, playerIdx, 'chase', 'inky', 317)
-    clyde = new Ghost(228, playerIdx, 'chase', 'clyde', 302)
+    blinky = new Ghost(231, playerIdx, 'scatter', 'blinky', 14)
+    pinky = new Ghost(171, playerIdx, 'scatter', 'pinky', 42)
+    inky = new Ghost(168, playerIdx, 'scatter', 'inky', 317)
+    clyde = new Ghost(228, playerIdx, 'scatter', 'clyde', 302)
     blinky.move()
     pinky.move()
     inky.move()
     clyde.move()
+
+    //use change state to kick off inital state timers
+    blinky.changeState('scatter')
+    pinky.changeState('scatter')
+    inky.changeState('scatter')
+    clyde.changeState('scatter')
   }
 
   function loadWalls() {
@@ -308,10 +347,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cells[playerIdx].classList.contains('energizer')) {
       cells[playerIdx].classList.remove('energizer')
       // set the ghost to frightened mode
-      if (blinky.getState() !== 'dead') blinky.changeState('scatter')
-      if (pinky.getState() !== 'dead') pinky.changeState('scatter')
-      if (inky.getState() !== 'dead') inky.changeState('scatter')
-      if (clyde.getState() !== 'dead') clyde.changeState('scatter')
+      if (blinky.getState() !== 'dead') blinky.changeState('frightened')
+      if (pinky.getState() !== 'dead') pinky.changeState('frightened')
+      if (inky.getState() !== 'dead') inky.changeState('frightened')
+      if (clyde.getState() !== 'dead') clyde.changeState('frightened')
     }
     // eat ghosts
     if (playerIdx === blinky.getIdx() && blinky.getState() === 'frightened') {
