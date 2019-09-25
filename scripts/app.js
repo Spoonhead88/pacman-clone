@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const splash = document.querySelector('.splash')
   const gameover = document.querySelector('.gameover')
   const win = document.querySelector('.win')
+  const mainUI = document.querySelector('.mainUI')
   // array to fill with the divs
   const cells = []
   // store player index globally
@@ -459,6 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //stop player
     cells[playerIdx].classList.remove('player')
     //display game over message ask to play again
+    mainUI.style.display = 'none'
     grid.style.display = 'none'
     gameover.style.display = 'block'
     gameStarted = false
@@ -477,6 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
     gameover.style.display = 'none'
     splash.style.display = 'none'
     win.style.display = 'none'
+    mainUI.style.display = 'flex'
     grid.style.display = 'flex'
     pillCounter = 0
     playerIdx = 21
@@ -495,6 +498,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //stop player
     cells[playerIdx].classList.remove('player')
     //display game over message ask to play again
+    mainUI.style.display = 'none'
     grid.style.display = 'none'
     win.style.display = 'block'
     gameStarted = false
@@ -502,7 +506,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function endGame() {
     splash.style.display = 'block'
-    grid.style.display = 'none'
+    mainUI.style.display = 'none'
     gameStarted = false
   }
 

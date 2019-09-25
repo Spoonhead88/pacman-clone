@@ -56,6 +56,16 @@ h2 {
   display: none;
 }
 
+.mainUI {
+  display: none;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  height: 100%;
+  max-height: 600px;
+  max-width: 600px;
+  padding-right: 50px;
+}
 
 .grid div {
   /* border: 1px solid; */
