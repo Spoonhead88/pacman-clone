@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
   //classes
   class Ghost {
     constructor(ghostIdx, targetIdx, state, cssClass, cornerIdx) {
+      this.startIdx = ghostIdx
       this.ghostIdx = ghostIdx
       this.previousIdx = 0
       this.targetIdx = targetIdx
@@ -131,8 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             break
         }
-        //check to see if pacman has been reached
-        this.hasReachedPacman()
       }, this.movementSpeed)
     }
     stop() {
@@ -252,13 +251,12 @@ document.addEventListener('DOMContentLoaded', () => {
       clearTimeout(this.scatterTimer)
       clearTimeout(this.frightTimer)
     }
-    reset(newIdx, newTarget, newState, newCssClass, newCornerIdx) {
+    reset(newTarget) {
       cells[this.ghostIdx].classList.remove(this.cssClass)
-      this.setIdx(newIdx)
+      this.setIdx(this.startIdx)
       this.changeTarget(newTarget)
-      this.setInitialState(newState)
-      this.changeCssClass(newCssClass)
-      this.setCornerIdx(newCornerIdx)
+      this.setInitialState('scatter')
+      this.changeCssClass(this.normalCss)
       this.clearTimers()
       cells[this.ghostIdx].classList.add(this.cssClass)
       this.move()
@@ -272,11 +270,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const inky = new Ghost(168, playerIdx, 'scatter', 'inky', 317)
   const clyde = new Ghost(228, playerIdx, 'scatter', 'clyde', 302)
 
+  const ghostArray = [blinky, pinky, inky, clyde]
+
   function loadGhosts() {
-    blinky.reset(231, playerIdx, 'scatter', 'blinky', 14)
-    pinky.reset(171, playerIdx, 'scatter', 'pinky', 42)
-    inky.reset(168, playerIdx, 'scatter', 'inky', 317)
-    clyde.reset(228, playerIdx, 'scatter', 'clyde', 302)
+    ghostArray.forEach((ghost) => ghost.reset(playerIdx))
   }
 
   function loadWalls() {
@@ -339,25 +336,19 @@ document.addEventListener('DOMContentLoaded', () => {
     //eat enerizer and scare ghosts
     if (cells[playerIdx].classList.contains('energizer')) {
       cells[playerIdx].classList.remove('energizer')
-      // set the ghost to frightened mode
-      if (blinky.getState() !== 'dead') blinky.changeState('frightened')
-      if (pinky.getState() !== 'dead') pinky.changeState('frightened')
-      if (inky.getState() !== 'dead') inky.changeState('frightened')
-      if (clyde.getState() !== 'dead') clyde.changeState('frightened')
+      ghostArray.forEach((ghost) => {
+        if (ghost.getState() !== 'dead') ghost.changeState('frightened')
+      })
     }
-    // eat ghosts
-    if (playerIdx === blinky.getIdx() && blinky.getState() === 'frightened') {
-      blinky.changeState('dead')
-    }
-    if (playerIdx === inky.getIdx() && inky.getState() === 'frightened') {
-      inky.changeState('dead')
-    }
-    if (playerIdx === pinky.getIdx() && pinky.getState() === 'frightened') {
-      pinky.changeState('dead')
-    }
-    if (playerIdx === clyde.getIdx() && clyde.getState() === 'frightened') {
-      clyde.changeState('dead')
-    }
+
+    //eat ghosts
+    ghostArray.forEach((ghost) => {
+      if (playerIdx === ghost.getIdx() && ghost.getState() === 'frightened') {
+        ghost.changeState('dead')
+      }
+    })
+
+    // if all pills eaten then game is won
     if (pillCounter === totalPills) {
       if (confirm('You won, play again?')) {
         startGame()
@@ -410,8 +401,6 @@ document.addEventListener('DOMContentLoaded', () => {
       //stop moving
       clearInterval(movementId)
     }
-    // eat whatever is on this tile
-    eat()
     // always set back to false after initial input
     bPlayerRequest = false
     //when moving, first thing to do is remove player from current div before moving on
@@ -452,18 +441,22 @@ document.addEventListener('DOMContentLoaded', () => {
   function gameOver() {
     console.log('game over')
     clearInterval(movementId)
-    //stop the ghosts 
-    blinky.stop()
-    pinky.stop()
-    inky.stop()
-    clyde.stop()
+    ghostArray.forEach((ghost) => ghost.stop())
 
     //stop player
     cells[playerIdx].classList.remove('player')
     document.removeEventListener('keyup', inputHandler)
-    //display game over message
-    //ask to play again
+    //display game over message ask to play again
     if (confirm('Game Over, Play Again?')) startGame()
+  }
+
+  function startCollisionCheck() {
+    setInterval(() => {
+      //pac eats whatever is on this tile
+      eat()
+      //ghosts check to eat pac when in chase and scatter
+      ghostArray.forEach((ghost) => ghost.hasReachedPacman())
+    }, 1)
   }
 
   function startGame() {
@@ -476,6 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadEnergizer()
     loadGhosts()
     cells[playerIdx].classList.add('player')
+    startCollisionCheck()
   }
   startGame()
 
