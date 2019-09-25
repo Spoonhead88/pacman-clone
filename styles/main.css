@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'zorque';
+  src: url(../assets/zorque.ttf) format('truetype');
+}
+
 * {
   box-sizing: border-box;
 }
@@ -8,7 +13,34 @@ body {
   height: 100vh;
   justify-content: center;
   margin: 0;
-  background: slategrey;
+  background: black;
+}
+
+/* .splash {
+  font-family: 'zorque', sans-serif;
+  font-size: 80px;
+  letter-spacing: 20px; 
+  color: rgb(217, 0, 255);
+  text-shadow: 1px 1px 40px rgb(0, 153, 255);
+} */
+
+.splash h1 {
+  font-family: 'zorque', sans-serif;
+  font-size: 80px;
+  letter-spacing: 20px; 
+  color: rgb(217, 0, 255);
+  text-shadow: 1px 1px 40px rgb(0, 153, 255);
+  text-align: center;
+  margin: 0;
+}
+
+.splash h2 {
+  font-family: 'zorque', sans-serif;
+  font-size: 20px;
+  letter-spacing: 10px; 
+  color: rgb(0, 153, 255);
+  text-align: center;
+  margin: 0;
 }
 
 .grid {
@@ -21,6 +53,7 @@ body {
   justify-content: center;
   max-height: 600px;
   max-width: 600px;
+  display: none;
 }
 
 
@@ -29,7 +62,7 @@ body {
   flex-grow: 1;
   height: 5%;
   width: 5%;
-  background: slategrey;
+  background: black;
 }
 
 .grid div.player {
@@ -38,11 +71,9 @@ body {
 }
 
 .grid div.energizer {
-  background-image: url(../assets/pacmanspritesheet.png);
-  background-size: 900px;
-  /* properties to be edited to animate the sprite */
-  background-position-x: -10px;
-  background-position-y: -515px;
+  background-image: url(../assets/pill.png);
+  background-position: center;
+  background-size: 80px;
 }
 
 .grid div.pill {
@@ -51,7 +82,8 @@ body {
 }
 
 .grid div.wall {
-  background: orange;
+  background: rgb(217, 0, 255);
+  box-shadow: 0 0 20px 0 rgb(0, 153, 255);
 }
 
 .grid div.blinky {

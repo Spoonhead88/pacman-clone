@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   //create a global variable to accessed to make it scalable (no magic numbers)
   const width = 20
   const grid = document.querySelector('.grid')
+  const splash = document.querySelector('.splash')
   // array to fill with the divs
   const cells = []
   // store player index globally
@@ -363,6 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function move(direction, timing = 200) {
+    console.log('pressed move')
     clearInterval(movementId)
     //if direction is corrected then change in a split second before carrying on
     setTimeout(function () {
@@ -436,6 +438,8 @@ document.addEventListener('DOMContentLoaded', () => {
       //load editor mode
       case 69: loadEditorMode()
         break
+      case 13: startGame()
+        break
     }
   }
 
@@ -466,10 +470,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function startGame() {
+    splash.style.display = 'none'
+    grid.style.display = 'flex'
     pillCounter = 0
     playerIdx = 21
     createTiles()
-    setupPlayerInput()
     loadWalls()
     loadPills()
     loadEnergizer()
@@ -477,7 +482,12 @@ document.addEventListener('DOMContentLoaded', () => {
     cells[playerIdx].classList.add('player')
     startCollisionCheck()
   }
-  startGame()
+
+  function displaySplash() {
+    setupPlayerInput()
+  } 
+
+  displaySplash()
 
   //************************************************************************** */
   //****************Editor**************************************************** */
