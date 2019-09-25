@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
   //classes
   class Ghost {
     constructor(ghostIdx, targetIdx, state, cssClass, cornerIdx) {
+      this.name = cssClass
       this.startIdx = ghostIdx
       this.ghostIdx = ghostIdx
       this.previousIdx = 0
@@ -152,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
           //save previous state to go back after fright
           this.previousState = 'chase'
           clearInterval(this.timeCounter)
-          console.log(this.cssClass, ' is on chase')
+          console.log(this.name, ' is on chase')
           this.stop()
           this.movementSpeed = 200
           this.cssClass = this.normalCss
@@ -160,12 +161,13 @@ document.addEventListener('DOMContentLoaded', () => {
           cells[this.ghostIdx].classList.add(this.cssClass)
           //after 20 seconds change back to scatter
           this.chaseTimer = setTimeout(() => {
+            console.log('chase sending ', this.name, 'back to scatter')
             this.changeState('scatter')
           }, 20000 - this.timeElapsed)
           //keep track of time remaining so it can start where it left
           this.timeCounter = setInterval(() => {
             this.timeElapsed += 1000
-            console.log('time remaining in chase: ',this.timeElapsed)
+            console.log(this.name, 'time elapsed in chase: ',this.timeElapsed)
             if (this.timeElapsed === 19000) {
               this.timeElapsed = 0
             }
@@ -175,31 +177,35 @@ document.addEventListener('DOMContentLoaded', () => {
         case 'frightened':
           //remove, change ad re add the cssClass
           this.stop()
+          console.log(this.name, 'is on frightened')
           this.movementSpeed = 600
           this.cssClass = this.frightenedCss
           //add this immediately instead of waiting for move to do it
           cells[this.ghostIdx].classList.add(this.cssClass)
           //clear the timeCounter interval and save the time remaining
           clearInterval(this.timeCounter)
-          console.log('frightened saved time remaining as: ', this.timeElapsed)
+          console.log(this.name, 'frightened state saved time remaining as: ', this.timeElapsed)
           //clear any chase or scatter timers
           clearTimeout(this.chaseTimer)
           clearTimeout(this.scatterTimer)
           //after 5 seconds go back to chase
           this.frightTimer = setTimeout(() => {
             //use previous state variable to go back and complete timing
+            console.log('fright sending ', this.name, 'back to ', this.previousState)
             this.changeState(this.previousState)
           }, 5000)
           this.move()
           break
         case 'dead':
+          this.previousState = 'dead'
           this.stop()
           this.clearTimers()
+          console.log(this.name, 'is dead. ')
           break
         case 'scatter':
           this.previousState = 'scatter'
           clearInterval(this.timeCounter)
-          console.log(this.cssClass, ' is on scatter')
+          console.log(this.name, 'is on scatter')
           this.stop()
           this.movementSpeed = 200
           this.cssClass = this.normalCss
@@ -207,13 +213,13 @@ document.addEventListener('DOMContentLoaded', () => {
           cells[this.ghostIdx].classList.add(this.cssClass)
           // scatter for 7 seconds then go back to chase
           this.scatterTimer = setTimeout(() => {
+            console.log('scatter sending', this.name, 'back to chase')
             this.changeState('chase')
-            console.log('logging timeElapsed: ', this.timeElapsed)
           }, 7000 - this.timeElapsed)
           //keep track of time remaining so it can start where it left
           this.timeCounter = setInterval(() => {
             this.timeElapsed += 1000
-            console.log('time remaining in scatter: ',this.timeElapsed)
+            console.log(this.name, 'time remaining in scatter: ',this.timeElapsed)
             if (this.timeElapsed === 6000) {
               this.timeElapsed = 0
             } 
@@ -247,9 +253,9 @@ document.addEventListener('DOMContentLoaded', () => {
       clearInterval(this.timerId)
       clearInterval(this.timeCounter)
       clearTimeout(this.chaseTimer)
-      clearTimeout(this.chaseTimer)
       clearTimeout(this.scatterTimer)
       clearTimeout(this.frightTimer)
+      this.timeElapsed = 0
     }
     reset(newTarget) {
       cells[this.ghostIdx].classList.remove(this.cssClass)

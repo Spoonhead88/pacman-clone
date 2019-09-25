@@ -33,19 +33,8 @@ body {
 }
 
 .grid div.player {
-  background-image: url(../assets/pacmanspritesheet.png);
-  background-size: 600px;
-  /* properties to be edited to animate the sprite */
-  background-position-x: -50px;
-  background-position-y: -10px;
-}
-
-.grid div.pill {
-  background-image: url(../assets/pacmanspritesheet.png);
-  background-size: 400px;
-  /* properties to be edited to animate the sprite */
-  background-position-x: 10px;
-  background-position-y: -223px;
+  background-image: url(../assets/cropped-pacman.gif);
+  background-size: cover;
 }
 
 .grid div.energizer {
@@ -56,48 +45,43 @@ body {
   background-position-y: -515px;
 }
 
+.grid div.pill {
+  background-image: url(../assets/pill.png);
+  background-size: cover;
+}
+
 .grid div.wall {
   background: orange;
 }
 
 .grid div.blinky {
-  background-image: url(../assets/pacmanspritesheet.png);
-  background-size: 600px;
-  /* properties to be edited to animate the sprite */
-  background-position-x: -12px;
-  background-position-y: -160px;
+  background-image: url(../assets/blinky.gif);
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 .grid div.pinky {
-  background-image: url(../assets/pacmanspritesheet.png);
-  background-size: 600px;
-  /* properties to be edited to animate the sprite */
-  background-position-x: -12px;
-  background-position-y: -197px;
+  background-image: url(../assets/pinky.gif);
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 .grid div.inky {
-  background-image: url(../assets/pacmanspritesheet.png);
-  background-size: 600px;
-  /* properties to be edited to animate the sprite */
-  background-position-x: -12px;
-  background-position-y: -235px;
+  background-image: url(../assets/inky.gif);
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 .grid div.clyde {
-  background-image: url(../assets/pacmanspritesheet.png);
-  background-size: 600px;
-  /* properties to be edited to animate the sprite */
-  background-position-x: -12px;
-  background-position-y: -270px;
+  background-image: url(../assets/clyde.gif);
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 .grid div.frightened {
-  background-image: url(../assets/pacmanspritesheet.png);
-  background-size: 600px;
-  /* properties to be edited to animate the sprite */
-  background-position-x: -12px;
-  background-position-y: -310px;
+  background-image: url(../assets/frightened.gif);
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 /* .grid div.player[data-direction="forward"] {
