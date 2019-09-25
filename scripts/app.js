@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const width = 20
   const grid = document.querySelector('.grid')
   const splash = document.querySelector('.splash')
+  const gameover = document.querySelector('.gameover')
+  const win = document.querySelector('.win')
   // array to fill with the divs
   const cells = []
   // store player index globally
@@ -21,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
   //increments everytime a pill is eaten
   let pillCounter = 0
   let totalPills
+  let gameStarted = false
 
   //classes
   class Ghost {
@@ -357,9 +360,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // if all pills eaten then game is won
     if (pillCounter === totalPills) {
-      if (confirm('You won, play again?')) {
-        startGame()
-      }
+      // if (confirm('You won, play again?')) {
+      //   startGame()
+      // }
+      won()
     }
   }
 
@@ -438,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
       //load editor mode
       case 69: loadEditorMode()
         break
-      case 13: startGame()
+      case 13: gameStarted ? endGame() : startGame()
         break
     }
   }
@@ -452,12 +456,12 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('game over')
     clearInterval(movementId)
     ghostArray.forEach((ghost) => ghost.stop())
-
     //stop player
     cells[playerIdx].classList.remove('player')
-    document.removeEventListener('keyup', inputHandler)
     //display game over message ask to play again
-    if (confirm('Game Over, Play Again?')) startGame()
+    grid.style.display = 'none'
+    gameover.style.display = 'block'
+    gameStarted = false
   }
 
   function startCollisionCheck() {
@@ -470,23 +474,44 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function startGame() {
+    gameover.style.display = 'none'
     splash.style.display = 'none'
+    win.style.display = 'none'
     grid.style.display = 'flex'
     pillCounter = 0
     playerIdx = 21
-    createTiles()
     loadWalls()
     loadPills()
     loadEnergizer()
     loadGhosts()
     cells[playerIdx].classList.add('player')
     startCollisionCheck()
+    gameStarted = true
+  }
+
+  function won() {
+    clearInterval(movementId)
+    ghostArray.forEach((ghost) => ghost.stop())
+    //stop player
+    cells[playerIdx].classList.remove('player')
+    //display game over message ask to play again
+    grid.style.display = 'none'
+    win.style.display = 'block'
+    gameStarted = false
+  }
+
+  function endGame() {
+    splash.style.display = 'block'
+    grid.style.display = 'none'
+    gameStarted = false
   }
 
   function displaySplash() {
     setupPlayerInput()
   } 
 
+  // take createTiles out of start game, only needs to run once on page
+  createTiles()
   displaySplash()
 
   //************************************************************************** */

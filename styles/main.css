@@ -16,15 +16,7 @@ body {
   background: black;
 }
 
-/* .splash {
-  font-family: 'zorque', sans-serif;
-  font-size: 80px;
-  letter-spacing: 20px; 
-  color: rgb(217, 0, 255);
-  text-shadow: 1px 1px 40px rgb(0, 153, 255);
-} */
-
-.splash h1 {
+h1 {
   font-family: 'zorque', sans-serif;
   font-size: 80px;
   letter-spacing: 20px; 
@@ -34,13 +26,21 @@ body {
   margin: 0;
 }
 
-.splash h2 {
+h2 {
   font-family: 'zorque', sans-serif;
   font-size: 20px;
   letter-spacing: 10px; 
   color: rgb(0, 153, 255);
   text-align: center;
   margin: 0;
+}
+
+.gameover {
+  display: none;
+}
+
+.win {
+  display: none;
 }
 
 .grid {
@@ -115,41 +115,3 @@ body {
   background-size: contain;
   background-repeat: no-repeat;
 }
-
-/* .grid div.player[data-direction="forward"] {
-  transform: scaleX(1)
-}
-
-.grid div.player[data-direction="backward"] {
-  transform: scaleX(-1)
-}
-
-.grid div.player[data-step="0"] {
-  background-position-x: 1080px;
-  background-position-y: 0;
-}
-
-.grid div.player[data-step="1"] {
-  background-position-x: 2160px;
-  background-position-y: 0;
-}
-
-.grid div.player[data-step="2"] {
-  background-position-x: 3240px;
-  background-position-y: 0;
-}
-
-.grid div.player[data-step="3"] {
-  background-position-x: 4320px;
-  background-position-y: 0;
-}
-
-.grid div.player[data-step="4"] {
-  background-position-x: 5400px;
-  background-position-y: 0;
-}
-
-.grid div.player.surprise {
-  background-position-x: 120px;
-  background-position-y: -120px;
-} */
