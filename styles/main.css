@@ -35,6 +35,10 @@ h2 {
   margin: 0;
 }
 
+img {
+  position: absolute;
+}
+
 .gameover {
   display: none;
 }

@@ -11,12 +11,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const gameover = document.querySelector('.gameover')
   const win = document.querySelector('.win')
   const mainUI = document.querySelector('.mainUI')
+  const scoreBoard = document.querySelector('.score')
+  const levelDisplay = document.querySelector('.levelDisplay')
+  const pacgif = document.querySelector('.pacgif')
   // array to fill with the divs
   const cells = []
   // store player index globally
   let playerIdx = 0
   //timerId for movement
   let movementId = 0
+  // collision check interval
+  let collisionTimer = 0
   //boolean flag for movement func
   let bPlayerRequest = false
   // keep direction before altered so same direction can be forced if needed
@@ -24,7 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
   //increments everytime a pill is eaten
   let pillCounter = 0
   let totalPills
-  let gameStarted = false
+  let points = 0
+  let levelCounter = 1
 
   //classes
   class Ghost {
@@ -45,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
       this.chaseTimer = 0
       //millisecond interval between movements
       this.movementSpeed = 200
+      this.levelSpeedAdjust = 0
       this.timeElapsed = 0
       this.timeCounter = 0
       this.previousState = 0
@@ -160,7 +167,9 @@ document.addEventListener('DOMContentLoaded', () => {
           clearInterval(this.timeCounter)
           console.log(this.name, ' is on chase')
           this.stop()
-          this.movementSpeed = 200
+          //speed interval shorter to speed up
+          console.log(this.movementSpeed, 'speed in chase')
+          this.movementSpeed = 200 - this.levelSpeedAdjust
           this.cssClass = this.normalCss
           //add this immediately instead of waiting for move to do it
           cells[this.ghostIdx].classList.add(this.cssClass)
@@ -183,7 +192,8 @@ document.addEventListener('DOMContentLoaded', () => {
           //remove, change ad re add the cssClass
           this.stop()
           console.log(this.name, 'is on frightened')
-          this.movementSpeed = 600
+          //speed interval longer to slow down
+          this.movementSpeed = 600 - this.levelSpeedAdjust
           this.cssClass = this.frightenedCss
           //add this immediately instead of waiting for move to do it
           cells[this.ghostIdx].classList.add(this.cssClass)
@@ -212,7 +222,9 @@ document.addEventListener('DOMContentLoaded', () => {
           clearInterval(this.timeCounter)
           console.log(this.name, 'is on scatter')
           this.stop()
-          this.movementSpeed = 200
+          // speed interval shorter to speed up
+          this.movementSpeed = 200 - this.levelSpeedAdjust
+          console.log(this.movementSpeed, 'speed in scatter. ')
           this.cssClass = this.normalCss
           //add this immediately instead of waiting for move to do it
           cells[this.ghostIdx].classList.add(this.cssClass)
@@ -238,6 +250,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     changeCssClass(newCssClass) {
       this.cssClass = newCssClass
+    }
+    // setters and getters
+    getSpeedAdjust() {
+      return this.levelSpeedAdjust
+    }
+    setSpeedAdjust(newSpeed) {
+      this.levelSpeedAdjust = newSpeed
     }
     getState() {
       return this.state
@@ -343,6 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cells[playerIdx].classList.contains('pill')) {
       cells[playerIdx].classList.remove('pill')
       pillCounter++
+      points += 1
     }
     //eat enerizer and scare ghosts
     if (cells[playerIdx].classList.contains('energizer')) {
@@ -350,26 +370,22 @@ document.addEventListener('DOMContentLoaded', () => {
       ghostArray.forEach((ghost) => {
         if (ghost.getState() !== 'dead') ghost.changeState('frightened')
       })
+      points += 5
     }
 
     //eat ghosts
     ghostArray.forEach((ghost) => {
       if (playerIdx === ghost.getIdx() && ghost.getState() === 'frightened') {
         ghost.changeState('dead')
+        points += 10
       }
     })
 
     // if all pills eaten then game is won
-    if (pillCounter === totalPills) {
-      // if (confirm('You won, play again?')) {
-      //   startGame()
-      // }
-      won()
-    }
+    if (pillCounter === totalPills) won()
   }
 
   function move(direction, timing = 200) {
-    console.log('pressed move')
     clearInterval(movementId)
     //if direction is corrected then change in a split second before carrying on
     setTimeout(function () {
@@ -422,6 +438,11 @@ document.addEventListener('DOMContentLoaded', () => {
     cells[playerIdx].classList.add('player')
     //store this globally
     previousDirection = direction
+    //uodate score 
+    levelDisplay.textContent = levelCounter //+ 'Movement speed: ' + ghostArray[0].getMovementSpeed()
+    scoreBoard.textContent = points
+    console.log('levelCounter: ',levelCounter)
+    console.log('movementSpeed: ',ghostArray[0].getSpeedAdjust())
   }
 
   function inputHandler(e) {
@@ -443,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
       //load editor mode
       case 69: loadEditorMode()
         break
-      case 13: gameStarted ? endGame() : startGame()
+      case 13: startGame()
         break
     }
   }
@@ -454,20 +475,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function gameOver() {
-    console.log('game over')
+    levelCounter = 0
     clearInterval(movementId)
-    ghostArray.forEach((ghost) => ghost.stop())
+    clearInterval(collisionTimer)
+    //set movement speed back to initial
+    ghostArray.forEach((ghost) => {
+      ghost.stop()
+      ghost.setSpeedAdjust(0)
+    })
     //stop player
     cells[playerIdx].classList.remove('player')
     //display game over message ask to play again
     mainUI.style.display = 'none'
     grid.style.display = 'none'
     gameover.style.display = 'block'
-    gameStarted = false
+    points = 0
+    scoreBoard.textContent = points
   }
 
   function startCollisionCheck() {
-    setInterval(() => {
+    collisionTimer =  setInterval(() => {
       //pac eats whatever is on this tile
       eat()
       //ghosts check to eat pac when in chase and scatter
@@ -489,32 +516,42 @@ document.addEventListener('DOMContentLoaded', () => {
     loadGhosts()
     cells[playerIdx].classList.add('player')
     startCollisionCheck()
-    gameStarted = true
   }
 
   function won() {
+    console.log('won() was called. ')
     clearInterval(movementId)
-    ghostArray.forEach((ghost) => ghost.stop())
+    clearInterval(collisionTimer)
+    //up the difficulty
+    levelCounter++
+    ghostArray.forEach((ghost) => {
+      ghost.stop()
+      ghost.setSpeedAdjust(50)
+      console.log(ghost, 'movementSpeed: ', ghost.getSpeedAdjust())
+    })
+    console.log('levelCounter: ', levelCounter)
+   
     //stop player
     cells[playerIdx].classList.remove('player')
     //display game over message ask to play again
     mainUI.style.display = 'none'
     grid.style.display = 'none'
     win.style.display = 'block'
-    gameStarted = false
-  }
-
-  function endGame() {
-    splash.style.display = 'block'
-    mainUI.style.display = 'none'
-    gameStarted = false
   }
 
   function displaySplash() {
     setupPlayerInput()
   } 
 
+  function placeImage() {
+    
+    pacgif.top = cells[playerIdx].getBoundingClientRect().top
+    pacgif.left = cells[playerIdx].getBoundingClientRect().left
+    console.log('image should be placed. ') 
+  }
+
   // take createTiles out of start game, only needs to run once on page
+  placeImage()
   createTiles()
   displaySplash()
 
