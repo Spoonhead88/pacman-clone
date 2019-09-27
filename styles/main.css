@@ -37,6 +37,9 @@ h2 {
 
 img {
   position: absolute;
+  transition: transform 0.2s linear;
+  transform: translateY(0px);
+  will-change: transform;
 }
 
 .gameover {
@@ -76,13 +79,13 @@ img {
   flex-grow: 1;
   height: 5%;
   width: 5%;
-  background: black;
+  position: relative;
 }
 
-.grid div.player {
+/* .grid div.player {
   background-image: url(../assets/cropped-pacman.gif);
   background-size: cover;
-}
+} */
 
 .grid div.energizer {
   background-image: url(../assets/pill.png);

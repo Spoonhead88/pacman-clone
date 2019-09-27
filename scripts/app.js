@@ -13,7 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const mainUI = document.querySelector('.mainUI')
   const scoreBoard = document.querySelector('.score')
   const levelDisplay = document.querySelector('.levelDisplay')
-  const pacgif = document.querySelector('.pacgif')
+  let pacgif = document.querySelector('.pacgif')
+  let animTimer = 0
   // array to fill with the divs
   const cells = []
   // store player index globally
@@ -436,6 +437,8 @@ document.addEventListener('DOMContentLoaded', () => {
     cells[currentIdx].classList.remove('player')
     //now that the index has moved, add player class to it
     cells[playerIdx].classList.add('player')
+    //animate the move
+    animateMove()
     //store this globally
     previousDirection = direction
     //uodate score 
@@ -475,22 +478,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function gameOver() {
-    levelCounter = 0
-    clearInterval(movementId)
-    clearInterval(collisionTimer)
-    //set movement speed back to initial
-    ghostArray.forEach((ghost) => {
-      ghost.stop()
-      ghost.setSpeedAdjust(0)
-    })
-    //stop player
-    cells[playerIdx].classList.remove('player')
-    //display game over message ask to play again
-    mainUI.style.display = 'none'
-    grid.style.display = 'none'
-    gameover.style.display = 'block'
-    points = 0
-    scoreBoard.textContent = points
+    // levelCounter = 0
+    // clearInterval(movementId)
+    // clearInterval(collisionTimer)
+    // //set movement speed back to initial
+    // ghostArray.forEach((ghost) => {
+    //   ghost.stop()
+    //   ghost.setSpeedAdjust(0)
+    // })
+    // //stop player
+    // cells[playerIdx].classList.remove('player')
+    // //display game over message ask to play again
+    // mainUI.style.display = 'none'
+    // grid.style.display = 'none'
+    // gameover.style.display = 'block'
+    // points = 0
+    // scoreBoard.textContent = points
   }
 
   function startCollisionCheck() {
@@ -506,7 +509,7 @@ document.addEventListener('DOMContentLoaded', () => {
     gameover.style.display = 'none'
     splash.style.display = 'none'
     win.style.display = 'none'
-    mainUI.style.display = 'flex'
+    mainUI.style.display = 'none'
     grid.style.display = 'flex'
     pillCounter = 0
     playerIdx = 21
@@ -515,6 +518,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadEnergizer()
     loadGhosts()
     cells[playerIdx].classList.add('player')
+    placeImage()
     startCollisionCheck()
   }
 
@@ -544,14 +548,31 @@ document.addEventListener('DOMContentLoaded', () => {
   } 
 
   function placeImage() {
-    
-    pacgif.top = cells[playerIdx].getBoundingClientRect().top
-    pacgif.left = cells[playerIdx].getBoundingClientRect().left
-    console.log('image should be placed. ') 
+    const y = cells[playerIdx].getBoundingClientRect().top
+    const x = cells[playerIdx].getBoundingClientRect().left
+    const width = cells[playerIdx].getBoundingClientRect().width
+    const height = cells[playerIdx].getBoundingClientRect().height
+    pacgif.style.left = x + 'px'
+    pacgif.style.top = y + 'px'
+    pacgif.style.width = width + 'px'
+    pacgif.style.height = height + 'px'
+    //pacgif.style.zIndex = '2'
+  }
+
+  function animateMove() {
+    const playerLeft = cells[playerIdx].offsetLeft
+    const pacLeft = pacgif.offsetLeft
+    const playerTop = cells[playerIdx].offsetTop
+    const pacTop = pacgif.offsetTop
+    //const playerTop = cells[playerIdx].offsetTop
+    //const pacTop = pacgif.offsetTop
+    const xDiff = playerLeft - pacLeft
+    const yDiff = playerTop - pacTop  
+    //const yDiff = playerTop - pacTop
+    pacgif.style.transform = `translate(${xDiff}px, ${yDiff}px)`
   }
 
   // take createTiles out of start game, only needs to run once on page
-  placeImage()
   createTiles()
   displaySplash()
 
