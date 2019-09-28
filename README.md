@@ -44,7 +44,57 @@ A timer changes the ghosts from chase to scatter. because of this the ghosts att
 
 an example of the ghosts movement function-
 
-(code screenshot here)
+```javascript
+moveAmount(newIdx) {
+      //remove cssClass from this cell before moving
+      cells[this.ghostIdx].classList.remove(this.cssClass)
+      //save reference to check next move
+      this.previousIdx = this.ghostIdx
+      // move the actual index by amount passed in
+      this.ghostIdx = newIdx
+      //place cssClass on new cell
+      cells[this.ghostIdx].classList.add(this.cssClass)
+    }
+    checkNextIdx(nextIdx) {
+      //check for wall and previous index
+      return (cells[nextIdx].classList.contains('wall') === false && cells.indexOf(cells[nextIdx]) !== this.previousIdx)
+    }
+    checkTunnelMove() {
+      if (this.ghostIdx === 200) {
+        cells[this.ghostIdx].classList.remove(this.cssClass)
+        this.ghostIdx = 218
+        this.previousIdx = 219
+      }
+      if (this.ghostIdx === 219) {
+        cells[this.ghostIdx].classList.remove(this.cssClass)
+        this. ghostIdx = 201
+        this.previousIdx = 200
+      }
+    }
+    moveCloser() {
+      //if ghost on the edge tile of a tunnel, transfer to other side
+      this.checkTunnelMove()
+      //get player and ghost coords
+      const targetX = cells[this.targetIdx].getBoundingClientRect().left
+      const ghostX = cells[this.ghostIdx].getBoundingClientRect().left
+      const targetY = cells[this.targetIdx].getBoundingClientRect().top
+      const ghostY = cells[this.ghostIdx].getBoundingClientRect().top
+      // check up, if there is no wall and not previous position, move there
+      if (this.checkNextIdx(this.ghostIdx - width) && ghostY > targetY) {
+        //move up
+        this.moveAmount(this.ghostIdx - width)
+      } else if (this.checkNextIdx(this.ghostIdx + width) && ghostY < targetY) {
+        //check down, if poss move there
+        this.moveAmount(this.ghostIdx + width)
+      } else if (this.checkNextIdx(this.ghostIdx - 1) && ghostX > targetX) {
+        //check left, if poss move there
+        this.moveAmount(this.ghostIdx - 1)
+      } else if (this.checkNextIdx(this.ghostIdx + 1) && ghostX < targetX) {
+        //check left, if poss move there
+        this.moveAmount(this.ghostIdx + 1)
+      }
+    }
+```
 
 Upon eating all the pips, the player wins and is moved on to the next level. The stage is the same but the ghosts will now be moving faster. the ghosts speed will increase everytime the stage is cleared. 
 
