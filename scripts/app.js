@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
       //check for wall and previous index
       return (cells[nextIdx].classList.contains('wall') === false && cells.indexOf(cells[nextIdx]) !== this.previousIdx)
     }
+    // move the ghost from one side of the level to the other when using tunnels
     checkTunnelMove() {
       if (this.ghostIdx === 200) {
         cells[this.ghostIdx].classList.remove(this.cssClass)
