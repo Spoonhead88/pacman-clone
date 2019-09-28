@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     moveCloser() {
-      //if ghost on the edge tile of a tunnel, transfer to other side
+      //if ghost on the edge tile of a tunnel, transfer to other side of stage
       this.checkTunnelMove()
       //get player and ghost coords
       const targetX = cells[this.targetIdx].getBoundingClientRect().left
