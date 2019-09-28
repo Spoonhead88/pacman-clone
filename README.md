@@ -27,7 +27,7 @@ Use the clone button to download the game source code. Open the index.html file 
 
 The goal in pacman is for the player to collect all the pips to complete the level. While doing this the player has to avoid ghosts. if the ghosts catch the player it is game over.
 
-(gif here)
+![](ezgif.com-video-to-gif.gif)
 
 The ghosts have 3 modes of movement. 
 
