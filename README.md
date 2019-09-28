@@ -48,8 +48,6 @@ an example of the ghosts movement function-
 
 Upon eating all the pips, the player wins and is moved on to the next level. The stage is the same but the ghosts will now be moving faster. the ghosts speed will increase everytime the stage is cleared. 
 
-(gif of game win and next level)
-
 ## Challenges and future improvements
 
 The main challenge of the project was to create a ghost AI that was similair to the original pacman. I recreated this in much the same way by giving the ghosts the ability to change targe tiles depending on which mode they are in. 
@@ -58,7 +56,7 @@ The part where i spent the most time and had the most difficulty was organizing 
 
 The main future improvement for the project would be to expand on the level editor that i created for my own convenience. It would be a great idea to make this more user friendly and accesible to users. This would give a whole new feature where players could make there own stages for the game and save them.
 
-(level editor gif goes here)
+![](leveleditor.gif)
 
 ## Author 
 
