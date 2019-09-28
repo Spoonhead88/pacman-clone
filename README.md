@@ -21,7 +21,7 @@ The game is deployed on GitHub pages and it can be found here- https://lloydnoon
 
 ## Getting Started
 
-Use the clone button to download the game source code. Open the index.html file in your browser and the game should start, if not check console for any issues. The images used in this game are stored in the images folder and are all png files.
+Use the clone button to download the game source code. Open the index.html file in your browser and the game should start, if not check console for any issues. The assets used in this game are stored in the assets folder. They inlcude gifs, png files and fonts.
 
 ## Game Architecture
 
