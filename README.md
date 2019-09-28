@@ -17,7 +17,7 @@ It is a pacman clone in which i attempted to recreate the original games logic u
 
 ## Deployment
 
-The game is deployed on GitHub pages and it can be found here- https://spoonhead88.github.io/pacman-clone/
+The game is deployed on GitHub pages and it can be found here- https://lloydnoone.github.io/pacman-clone/
 
 ## Getting Started
 
