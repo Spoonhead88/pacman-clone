@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (this.ghostIdx === 219) {
         cells[this.ghostIdx].classList.remove(this.cssClass)
-        this. ghostIdx = 201
+        this.ghostIdx = 201
         this.previousIdx = 200
       }
     }
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             break
           //go up a whole row, but not past zero
-          case 'frightened': 
+          case 'frightened':
             //make target a randomized index
             this.targetIdx = Math.floor(Math.random() * Math.floor(400))
             //same as chase but with a randomized target
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
           //keep track of time remaining so it can start where it left
           this.timeCounter = setInterval(() => {
             this.timeElapsed += 1000
-            console.log(this.name, 'time elapsed in chase: ',this.timeElapsed)
+            console.log(this.name, 'time elapsed in chase: ', this.timeElapsed)
             if (this.timeElapsed === 19000) {
               this.timeElapsed = 0
             }
@@ -252,10 +252,10 @@ document.addEventListener('DOMContentLoaded', () => {
           //keep track of time remaining so it can start where it left
           this.timeCounter = setInterval(() => {
             this.timeElapsed += 1000
-            console.log(this.name, 'time remaining in scatter: ',this.timeElapsed)
+            console.log(this.name, 'time remaining in scatter: ', this.timeElapsed)
             if (this.timeElapsed === 6000) {
               this.timeElapsed = 0
-            } 
+            }
           }, 1000)
           this.move()
           break
@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function loadWalls() {
     //const wallsData = JSON.parse(localStorage.getItem('wallsData'))
     //have to hardcode it for online deploy
-    const wallsData = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,28,31,39,40,42,43,44,45,46,48,51,53,54,55,56,57,59,60,62,63,64,65,66,68,71,73,74,75,76,77,79,80,82,83,84,85,86,88,91,93,94,95,96,97,99,100,119,120,122,123,124,125,126,128,129,130,131,133,134,135,136,137,139,140,142,143,144,145,146,149,150,153,154,155,156,157,159,160,167,172,179,180,181,182,183,184,185,187,189,190,192,194,195,196,197,198,199,209,210,220,221,222,223,224,225,227,232,234,235,236,237,238,239,240,241,242,243,244,245,247,248,249,250,251,252,254,255,256,257,258,259,260,268,269,270,271,279,280,282,283,284,286,288,289,290,291,293,295,296,297,299,300,302,303,304,306,313,315,316,317,319,320,326,327,328,329,330,331,332,333,339,340,342,343,344,345,346,347,348,349,350,351,352,353,354,355,356,357,359,360,379,380,381,382,383,384,385,386,387,388,389,390,391,392,393,394,395,396,397,398,399]
+    const wallsData = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 28, 31, 39, 40, 42, 43, 44, 45, 46, 48, 51, 53, 54, 55, 56, 57, 59, 60, 62, 63, 64, 65, 66, 68, 71, 73, 74, 75, 76, 77, 79, 80, 82, 83, 84, 85, 86, 88, 91, 93, 94, 95, 96, 97, 99, 100, 119, 120, 122, 123, 124, 125, 126, 128, 129, 130, 131, 133, 134, 135, 136, 137, 139, 140, 142, 143, 144, 145, 146, 149, 150, 153, 154, 155, 156, 157, 159, 160, 167, 172, 179, 180, 181, 182, 183, 184, 185, 187, 189, 190, 192, 194, 195, 196, 197, 198, 199, 209, 210, 220, 221, 222, 223, 224, 225, 227, 232, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 247, 248, 249, 250, 251, 252, 254, 255, 256, 257, 258, 259, 260, 268, 269, 270, 271, 279, 280, 282, 283, 284, 286, 288, 289, 290, 291, 293, 295, 296, 297, 299, 300, 302, 303, 304, 306, 313, 315, 316, 317, 319, 320, 326, 327, 328, 329, 330, 331, 332, 333, 339, 340, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 359, 360, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399]
     //upon load cycle cells
     for (let i = 0; i < cells.length; i++) {
       // at each cell, check to see if the index matches any in the saved walls array
@@ -339,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function loadPills() {
     //const pillsData = JSON.parse(localStorage.getItem('pillsData'))
     // have to hardcode for online deploy
-    const pillsData = [21,22,23,24,25,26,27,29,30,32,33,34,35,36,37,38,41,47,49,50,52,58,67,69,70,72,81,87,89,90,92,98,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,121,138,141,158,161,162,163,164,165,166,173,174,175,176,177,178,186,193,226,233,246,253,261,262,263,264,265,266,267,272,273,274,275,276,277,278,285,287,292,294,301,305,307,308,309,310,311,312,314,318,321,322,323,324,325,334,335,336,337,338,341,358,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378]
+    const pillsData = [21, 22, 23, 24, 25, 26, 27, 29, 30, 32, 33, 34, 35, 36, 37, 38, 41, 47, 49, 50, 52, 58, 67, 69, 70, 72, 81, 87, 89, 90, 92, 98, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 121, 138, 141, 158, 161, 162, 163, 164, 165, 166, 173, 174, 175, 176, 177, 178, 186, 193, 226, 233, 246, 253, 261, 262, 263, 264, 265, 266, 267, 272, 273, 274, 275, 276, 277, 278, 285, 287, 292, 294, 301, 305, 307, 308, 309, 310, 311, 312, 314, 318, 321, 322, 323, 324, 325, 334, 335, 336, 337, 338, 341, 358, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378]
     totalPills = pillsData.length
     //upon load cycle cells
     for (let i = 0; i < cells.length; i++) {
@@ -354,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function loadEnergizer() {
     //const energizerData = JSON.parse(localStorage.getItem('energizerData'))
     //have to hardcode for online deploy
-    const energizerData = [61,78,281,298]
+    const energizerData = [61, 78, 281, 298]
     //upon load cycle cells
     for (let i = 0; i < cells.length; i++) {
       // at each cell, check to see if the index matches any in the saved walls array
@@ -424,13 +424,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //handle user input
     switch (direction) {
-      //move left, only if but not past zero
+      //move left
       case 'left': playerIdx -= 1
         break
-      //go up a whole row, but not past zero
+      //go up a whole row
       case 'up': playerIdx -= width
         break
-      //move right, -1 because cpu starts at 0
+      //move right
       case 'right': playerIdx += 1
         break
       //move down by adding a whole row
@@ -452,6 +452,13 @@ document.addEventListener('DOMContentLoaded', () => {
       //stop moving
       clearInterval(movementId)
     }
+    //use tunnels to move from one side of the stage to another
+    if (playerIdx === 200) {
+      playerIdx = 218
+    }
+    if (playerIdx === 219) {
+      playerIdx = 201
+    }
     // always set back to false after initial input
     bPlayerRequest = false
     //when moving, first thing to do is remove player from current div before moving on
@@ -465,8 +472,6 @@ document.addEventListener('DOMContentLoaded', () => {
     //uodate score 
     levelDisplay.textContent = levelCounter
     scoreBoard.textContent = points
-    console.log('levelCounter: ',levelCounter)
-    console.log('movementSpeed: ',ghostArray[0].getSpeedAdjust())
   }
 
   function inputHandler(e) {
@@ -518,7 +523,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function startCollisionCheck() {
-    collisionTimer =  setInterval(() => {
+    collisionTimer = setInterval(() => {
       //pac eats whatever is on this tile
       eat()
       //ghosts check to eat pac when in chase and scatter
@@ -555,7 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log(ghost, 'movementSpeed: ', ghost.getSpeedAdjust())
     })
     console.log('levelCounter: ', levelCounter)
-   
+
     //stop player
     cells[playerIdx].classList.remove('player')
     //display game over message ask to play again
@@ -566,7 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function displaySplash() {
     setupPlayerInput()
-  } 
+  }
 
   function placeImage() {
     const y = cells[playerIdx].getBoundingClientRect().top
@@ -588,7 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //const playerTop = cells[playerIdx].offsetTop
     //const pacTop = pacgif.offsetTop
     const xDiff = playerLeft - pacLeft
-    const yDiff = playerTop - pacTop  
+    const yDiff = playerTop - pacTop
     //const yDiff = playerTop - pacTop
     pacgif.style.transform = `translate(${xDiff}px, ${yDiff}px)`
   }
