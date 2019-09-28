@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const mainUI = document.querySelector('.mainUI')
   const scoreBoard = document.querySelector('.score')
   const levelDisplay = document.querySelector('.levelDisplay')
-  let pacgif = document.querySelector('.pacgif')
-  let animTimer = 0
+  const pacgif = document.querySelector('.pacgif')
+
   // array to fill with the divs
   const cells = []
   // store player index globally
@@ -71,7 +71,21 @@ document.addEventListener('DOMContentLoaded', () => {
       //check for wall and previous index
       return (cells[nextIdx].classList.contains('wall') === false && cells.indexOf(cells[nextIdx]) !== this.previousIdx)
     }
+    checkTunnelMove() {
+      if (this.ghostIdx === 200) {
+        cells[this.ghostIdx].classList.remove(this.cssClass)
+        this.ghostIdx = 218
+        this.previousIdx = 219
+      }
+      if (this.ghostIdx === 219) {
+        cells[this.ghostIdx].classList.remove(this.cssClass)
+        this. ghostIdx = 201
+        this.previousIdx = 200
+      }
+    }
     moveCloser() {
+      //if ghost on the edge tile of a tunnel, transfer to other side
+      this.checkTunnelMove()
       //get player and ghost coords
       const targetX = cells[this.targetIdx].getBoundingClientRect().left
       const ghostX = cells[this.ghostIdx].getBoundingClientRect().left
@@ -109,6 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     move() {
+      /* 200 - 219 */
       this.timerId = setInterval(() => {
         //update target idx to player idx
         this.targetIdx = playerIdx
@@ -297,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const blinky = new Ghost(231, playerIdx, 'scatter', 'blinky', 14)
-  const pinky = new Ghost(171, playerIdx, 'scatter', 'pinky', 42)
+  const pinky = new Ghost(171, playerIdx, 'scatter', 'pinky', 100)
   const inky = new Ghost(168, playerIdx, 'scatter', 'inky', 317)
   const clyde = new Ghost(228, playerIdx, 'scatter', 'clyde', 302)
 
@@ -442,7 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //store this globally
     previousDirection = direction
     //uodate score 
-    levelDisplay.textContent = levelCounter //+ 'Movement speed: ' + ghostArray[0].getMovementSpeed()
+    levelDisplay.textContent = levelCounter
     scoreBoard.textContent = points
     console.log('levelCounter: ',levelCounter)
     console.log('movementSpeed: ',ghostArray[0].getSpeedAdjust())
@@ -478,22 +493,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function gameOver() {
-    // levelCounter = 0
-    // clearInterval(movementId)
-    // clearInterval(collisionTimer)
-    // //set movement speed back to initial
-    // ghostArray.forEach((ghost) => {
-    //   ghost.stop()
-    //   ghost.setSpeedAdjust(0)
-    // })
-    // //stop player
-    // cells[playerIdx].classList.remove('player')
-    // //display game over message ask to play again
-    // mainUI.style.display = 'none'
-    // grid.style.display = 'none'
-    // gameover.style.display = 'block'
-    // points = 0
-    // scoreBoard.textContent = points
+    levelCounter = 1
+    clearInterval(movementId)
+    clearInterval(collisionTimer)
+    //set movement speed back to initial
+    ghostArray.forEach((ghost) => {
+      ghost.stop()
+      ghost.setSpeedAdjust(0)
+    })
+    //stop player
+    cells[playerIdx].classList.remove('player')
+    //display game over message ask to play again
+    mainUI.style.display = 'none'
+    grid.style.display = 'none'
+    gameover.style.display = 'block'
+    points = 0
+    scoreBoard.textContent = points
   }
 
   function startCollisionCheck() {
@@ -509,7 +524,7 @@ document.addEventListener('DOMContentLoaded', () => {
     gameover.style.display = 'none'
     splash.style.display = 'none'
     win.style.display = 'none'
-    mainUI.style.display = 'none'
+    mainUI.style.display = 'flex'
     grid.style.display = 'flex'
     pillCounter = 0
     playerIdx = 21
@@ -606,10 +621,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleClick(e) {
     //on click add wall class to cell
     //if it already contains wall class then remove it
-    if (e.target.classList.contains('energizer')) {
-      e.target.classList.remove('energizer')
+    if (e.target.classList.contains('wall')) {
+      e.target.classList.remove('wall')
       return
-    } e.target.classList.add('energizer')
+    } e.target.classList.add('wall')
   }
 
   function setupEditorListeners() {
