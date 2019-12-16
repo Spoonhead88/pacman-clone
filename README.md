@@ -98,13 +98,23 @@ moveAmount(newIdx) {
 
 Upon eating all the pips, the player wins and is moved on to the next level. The stage is the same but the ghosts will now be moving faster. the ghosts speed will increase everytime the stage is cleared. 
 
-## Challenges and future improvements
+## Wins and Blockers
 
-The main challenge of the project was to create a ghost AI that was similair to the original pacman. I recreated this in much the same way by giving the ghosts the ability to change targe tiles depending on which mode they are in. 
+The biggest blocker was  to create a ghost AI that was similair to the original pacman. I recreated this in much the same way by giving the ghosts the ability to change target tiles depending on which mode they are in. 
 
-The part where i spent the most time and had the most difficulty was organizing the timers and intervals which control these states. They switch back and forth and are interupted by the frightened state and should resume where they left off. The functions handling this are complicated and need refactoring somehow.
+The part where i actually spent the most time and had the most difficulty was organizing the timers and intervals which control these states. They switch back and forth and are interupted by the frightened state and should resume where they left off. The functions handling this are complicated and need refactoring somehow.
+
+A big win for me on this project was getting to grips with classes. Having dabbled a little with C++ games in the past i found this easy to pick up. Using classes felt more natural to me than making it without and this ability helped later on in the course whenever classes were needed.
+
+## Future Features
 
 The main future improvement for the project would be to expand on the level editor that i created for my own convenience. It would be a great idea to make this more user friendly and accesible to users. This would give a whole new feature where players could make there own stages for the game and save them.
+
+## Key Learnings
+
+The main thing i learnt on this project was actually time management in software development and prioritization. Being the first project on the course, it was the first chance I had the opportunity to manage my own time an workflow. I didnt struggle with this as i was quite confident on the project as a whole but I left the styling a bit late. This was because i should have stopped adding new features and concentrated on bug fixing earlier.
+
+Another thing to note would be planning. I should have spent more time in the planning stage focusing on the actual architecture of the game before starting to code. I now appreciate this aspect more and spend more time with it.
 
 ![](leveleditor.gif)
 
